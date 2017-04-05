@@ -1,0 +1,39 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- 自定义登录弹窗提示形式:
+            无边框/无标题/背景透明#00000000/浮在activity上 /对话框是否有遮盖/弹窗位置
+            （1）ChooseItemDialog中调用：选择相机图片-->
+    <style name="LoadingDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:gravity">bottom</item>
+    </style>
+
+
+    <!--  主界面tab中RadioButton字体样式-->
+    <style name="slider_tab_style">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@drawable/slider_tab_tvcolor</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:background">@drawable/slider_tab_bgcolor</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:button">@null</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:layout_weight">1.0</item>
+    </style>
+
+
+</resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="356dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/layout_topbar"
+        android:layout_toRightOf="@+id/layout_btn"
+        android:background="@drawable/list_style"/>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/msg_viewPaper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/listView"
+        android:background="@android:color/white">
+
+    </android.support.v4.view.ViewPager>
+</RelativeLayout>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white">
+
+    <com.yvision.widget.CircleImageView
+        android:id="@+id/imageView"
+        android:layout_width="37dp"
+        android:layout_height="37dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"/>
+
+    <TextView
+        android:id="@+id/tv_default_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/imageView"
+        android:text="姓名："
+        android:textColor="@color/cl_text_common"
+        android:textSize="@dimen/common_textSize_default14"/>
+
+    <TextView
+        android:id="@+id/tv_default_workid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_default_name"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/imageView"
+        android:text="工号："
+        android:textColor="@color/cl_text_common"
+        android:textSize="@dimen/common_textSize_default14"/>
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tv_default_name"
+        android:layout_toEndOf="@+id/tv_default_name"
+        android:layout_toRightOf="@+id/tv_default_name"
+        android:text="title"
+        android:textColor="@color/cl_text_common"
+        android:textSize="@dimen/common_textSize_default14"/>
+
+    <TextView
+        android:id="@+id/tv_workid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/tv_default_workid"
+        android:layout_toRightOf="@+id/tv_default_workid"
+        android:text="编号"
+        android:textColor="@color/cl_text_common"
+        android:textSize="@dimen/common_textSize_default14"
+        android:layout_alignBottom="@+id/tv_default_workid"
+        android:layout_alignTop="@+id/tv_default_workid"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:background="@mipmap/forword"
+        android:id="@+id/imageView3"/>
+</RelativeLayout>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+    <include
+        android:id="@+id/layout_topbar"
+        layout="@layout/topbar_common"/>
+
+    <RelativeLayout
+        android:id="@+id/layout_btn"
+        android:layout_width="68dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layout_topbar"
+        android:background="@color/common_bg_color">
+
+        <RadioGroup
+            android:id="@+id/radiogroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+
+            <RadioButton
+                android:id="@+id/btn_message"
+                style="@style/slider_tab_style"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:checked="true"
+                android:drawableTop="@mipmap/topbar_msglist"
+                android:gravity="center"
+                android:padding="4dp"
+                android:paddingRight="10dp"
+                android:text="@string/msg_list"
+                android:textSize="@dimen/common_textSize_default14"
+                />
+
+            <RadioButton
+                android:id="@+id/btn_vip"
+                style="@style/slider_tab_style"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:drawablePadding="4dp"
+                android:drawableTop="@mipmap/topbar_regist"
+                android:gravity="center"
+                android:padding="4dp"
+                android:paddingRight="10dp"
+                android:text="@string/vip_reg"
+                android:textSize="@dimen/common_textSize_default14"/>
+        </RadioGroup>
+    </RelativeLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layout_topbar"
+        android:layout_toRightOf="@+id/layout_btn">
+    </android.support.v4.view.ViewPager>
+</RelativeLayout>
