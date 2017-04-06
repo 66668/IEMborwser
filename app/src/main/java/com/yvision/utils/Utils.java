@@ -42,6 +42,7 @@ import java.net.SocketException;
 import java.security.MessageDigest;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -139,14 +140,14 @@ public class Utils {
     }
 
     /**
-     * 获取今天的时间戳(秒)
-     *
+     * 获取当前时间
      * @return
      */
-    //	public static Integer getTodayTimeStamp() {
-    //		return ((Long) (Timestamp.valueOf(getCurrentDate() + " 00:00:00.0")
-    //				.getTime() / 1000)).intValue();
-    //	}
+    public static String getCurrentDate() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+        return formatter.format(curDate);
+    }
 
     /**
      * 获取时间戳 单位（毫秒）

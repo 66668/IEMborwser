@@ -12,6 +12,7 @@ import com.yvision.common.HttpResult;
 import com.yvision.common.MyException;
 import com.yvision.common.NetworkManager;
 import com.yvision.db.entity.UserEntity;
+import com.yvision.model.AttendDetailModel;
 import com.yvision.model.OldEmployeeImgModel;
 import com.yvision.model.OldEmployeeModel;
 import com.yvision.utils.APIUtils;
@@ -268,4 +269,23 @@ public class UserHelper {
         }.getType());
     }
 
+
+    /**
+     * 获取考勤详情
+     * get
+     */
+    public static AttendDetailModel getAttendDetail(Context context, String attendId)
+            throws MyException {
+
+        if (!NetworkManager.isNetworkAvailable(context)) {
+            throw new MyException(R.string.network_invalid);
+        }
+        HttpResult httpResult = APIUtils.getForObject(WebUrl.Attend.EMPLOYEE_DETAIL + attendId);
+
+        if (httpResult.hasError()) {
+            throw httpResult.getError();
+        }
+
+        return (new Gson()).fromJson(httpResult.jsonObject.toString(), AttendDetailModel.class);
+    }
 }

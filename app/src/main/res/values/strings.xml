@@ -16,4 +16,16 @@
     <string name="msg_list">信息列表</string>
     <string name="msg_search">信息查询</string>
     <string name="vip_reg">VIP注册</string>
+    <!-- msg详情-->
+    <string name="msg_regist_img">注册图:</string>
+    <string name="msg_cap_img">抓拍图:</string>
+    <string name="msg_name">姓名</string>
+    <string name="msg_gender">性别</string>
+    <string name="msg_id">编号</string>
+    <string name="msg_company">公司</string>
+    <string name="msg_captime">采集时间</string>
+    <string name="msg_score">分数</string>
+    <string name="msg_dept">部门</string>
+    <string name="msg_address">地址</string>
+    <string name="msg_dataface">人像库</string>
 </resources>
