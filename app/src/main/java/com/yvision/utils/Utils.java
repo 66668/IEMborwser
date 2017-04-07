@@ -46,6 +46,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
@@ -144,6 +145,11 @@ public class Utils {
      * @return
      */
     public static String getCurrentDate() {
+        //保存时间
+//        Calendar calendar = Calendar.getInstance();
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        String date = format.format(calendar.getTime());
+
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date curDate = new Date(System.currentTimeMillis());//获取当前时间
         return formatter.format(curDate);

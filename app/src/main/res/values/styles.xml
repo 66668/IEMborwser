@@ -20,6 +20,28 @@
         <item name="android:gravity">bottom</item>
     </style>
 
+    <!-- 设置统一白色字体样式-->
+    <style name="whitText">
+        <item name="android:shadowColor">#FF000000</item>
+        <item name="android:shadowRadius">3.0</item>
+        <item name="android:textColor">#FFF</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="whitText.topbar_right">
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="whitText.title">
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">18sp</item>
+        <!--<item name="android:textStyle">bold</item>-->
+    </style>
+
 
     <!--  主界面tab中RadioButton字体样式-->
     <style name="slider_tab_style">

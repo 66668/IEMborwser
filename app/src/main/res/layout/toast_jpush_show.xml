@@ -32,5 +32,15 @@
         android:padding="10dp"
         android:textColor="@android:color/white"
         android:textSize="@dimen/common_textSize_default18"/>
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_msg"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/common_textSize_default18"/>
 
 </RelativeLayout>

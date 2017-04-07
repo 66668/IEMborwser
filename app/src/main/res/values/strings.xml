@@ -27,5 +27,12 @@
     <string name="msg_score">分数</string>
     <string name="msg_dept">部门</string>
     <string name="msg_address">地址</string>
+    <string name="msg_attendType">考勤类型</string>
     <string name="msg_dataface">人像库</string>
+
+    <string name="RegisterActivity_et_name">请输入客户姓名</string>
+    <string name="RegisterActivity_employee_id">请输入员工编号</string>
+    <string name="RegisterActivity_et_id">请输入客户号</string>
+    <string name="radioBtn_male">男</string>
+    <string name="radioBtn_female">女</string>
 </resources>

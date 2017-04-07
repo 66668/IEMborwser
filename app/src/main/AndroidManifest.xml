@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.yvision">
+    <!-- 相机权限-->
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera.autofocus"/>
     <!-- wifi权限-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
@@ -59,6 +64,19 @@
             android:name=".MainActivity"
             android:screenOrientation="landscape">
         </activity>
+        <activity
+            android:name=".AddNewAttenderActivity"
+            android:screenOrientation="landscape">
+        </activity>
+        <activity
+            android:name=".AddNewViperActivity"
+            android:screenOrientation="landscape">
+        </activity>
+        <activity
+            android:name=".MyChangeCameraActivity"
+            android:screenOrientation="landscape">
+        </activity>
+
         <!-- 极光application配置开始-->
         <!-- Rich push 核心功能 since 2.0.6-->
         <activity

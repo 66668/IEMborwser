@@ -26,6 +26,7 @@ public class SQLAttend extends SQLiteOpenHelper {
     private static final int Db_CO_VERSION = 1;//数据库version
     private static final String DB_NAME = "contactcopy.db";//数据库
     private static final String TABLE_NAME = "attendDate";//表名
+
     //
     public SQLAttend(Context context) {
         super(context, DB_NAME, null, Db_CO_VERSION);
@@ -36,16 +37,17 @@ public class SQLAttend extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS "
-                + TABLE_NAME+"("
+                + TABLE_NAME + "("
                 + "message text ,"
                 + "Type text ,"
                 + "Id text ,"
+                + "Pic text ,"
                 + "date text)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS "+TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
 
@@ -56,7 +58,8 @@ public class SQLAttend extends SQLiteOpenHelper {
         values.put("message", model.getMessage());
         values.put("Type", model.getType());
         values.put("Id", model.getId());
-        values.put("date", model.getDate());
+        values.put("Pic", model.getPic());
+        values.put("date", model.getDateTime());
         db.insert(TABLE_NAME, null, values);
         db.close();
     }
@@ -67,7 +70,7 @@ public class SQLAttend extends SQLiteOpenHelper {
         try {
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor cursor = db.query(TABLE_NAME
-                    , new String[]{"message", "Type", "date", "Id"}
+                    , new String[]{"message", "Type", "date", "Id", "Pic"}
                     , null, null, null, null, null);
             cursor.moveToFirst();
             while (cursor.moveToNext()) {
@@ -75,16 +78,20 @@ public class SQLAttend extends SQLiteOpenHelper {
                 String Type = cursor.getString(cursor.getColumnIndex("Type"));
                 String date = cursor.getString(cursor.getColumnIndex("date"));
                 String Id = cursor.getString(cursor.getColumnIndex("Id"));
+                String Pic = cursor.getString(cursor.getColumnIndex("Pic"));
 
                 AttendModel model = new AttendModel();
-                model.setDate(date);
+
+                model.setDateTime(date);
                 model.setType(Type);
                 model.setId(Id);
                 model.setMessage(message);
+                model.setPic(Pic);
+
                 list.add(model);
             }
-            db.close();
             cursor.close();
+            db.close();
             if (list != null && list.size() > 0) {
                 return list;
             }

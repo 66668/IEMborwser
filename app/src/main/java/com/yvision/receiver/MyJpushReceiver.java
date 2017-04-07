@@ -1,19 +1,22 @@
 package com.yvision.receiver;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import com.yvision.R;
 import com.yvision.fragment.ListDataFragment;
 import com.yvision.model.AttendModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import cn.jpush.android.api.JPushInterface;
 
@@ -30,14 +33,9 @@ public class MyJpushReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
-//        Log.d(TAG, "[MyReceiver] onReceive - " + intent.getAction() + ", extras: " + printBundle(bundle));
+        //        Log.d(TAG, "[MyReceiver] onReceive - " + intent.getAction() + ", extras: " + printBundle(bundle));
 
-        //点击通知，打开指定界面处理
-        if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent.getAction())) {
-
-            //打开自定义的Activity
-
-        } else if (JPushInterface.ACTION_MESSAGE_RECEIVED.equals(intent.getAction())) {//自定义消息.不在通知栏显示
+        if (JPushInterface.ACTION_MESSAGE_RECEIVED.equals(intent.getAction())) {//自定义消息.不在通知栏显示
 
             AttendModel model = new AttendModel();
             //保存message
@@ -54,27 +52,24 @@ public class MyJpushReceiver extends BroadcastReceiver {
                 jsonObject = new JSONObject(extra);
                 String Type = jsonObject.getString("Type");
                 String Id = jsonObject.getString("Id");
-                Log.d(TAG, "Type=" + Type);
-                Log.d(TAG, "Id=" + Id);
+                String DateTime = jsonObject.getString("DateTime");
+                String Pic = jsonObject.getString("Pic");
+
                 model.setId(Id);
                 model.setType(Type);
+                model.setDateTime(DateTime);
+                model.setPic(Pic);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.d(TAG, "异常=" + e.toString());
             }
-
-            //保存时间
-            Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String date = format.format(calendar.getTime());
-            Log.d(TAG, "date=" + date);
-            model.setDate(date);
 
             //绑定消息到mainActivity中显示
             Intent msgIntent = new Intent(ListDataFragment.MESSAGE_RECEIVED_ACTION);
             msgIntent.putExtra("AttendModel", model);
             context.sendBroadcast(msgIntent);
 
+            processCustomMessage(context, bundle);//声音提示
         } else if (JPushInterface.ACTION_NOTIFICATION_RECEIVED.equals(intent.getAction())) { //接收到推送下来的通知
 
             //获取通知的ID,内容为空，id = 0
@@ -99,24 +94,42 @@ public class MyJpushReceiver extends BroadcastReceiver {
             //大图片通知样式中大图片的路径
             String bigPicPath = bundle.getString(JPushInterface.EXTRA_BIG_PIC_PATH);
 
-        } else if (JPushInterface.ACTION_REGISTRATION_ID.equals(intent.getAction())) {
-            // 获取注册id
-            String regId = bundle.getString(JPushInterface.EXTRA_REGISTRATION_ID);
-            //send the Registration Id to your server..
-
-            //通知中设置按钮样式时，使用该操作
-        } else if (JPushInterface.ACTION_NOTIFICATION_CLICK_ACTION.equals(intent.getAction())) {
-
-
-        } else if (JPushInterface.ACTION_RICHPUSH_CALLBACK.equals(intent.getAction())) {
-            Log.d(TAG, "[MyReceiver] 用户收到到RICH PUSH CALLBACK: " + bundle.getString(JPushInterface.EXTRA_EXTRA));
-            //在这里根据 JPushInterface.EXTRA_EXTRA 的内容处理代码，比如打开新的Activity， 打开一个网页等..
-
-        } else if (JPushInterface.ACTION_CONNECTION_CHANGE.equals(intent.getAction())) {
-            boolean connected = intent.getBooleanExtra(JPushInterface.EXTRA_CONNECTION_CHANGE, false);
-            Log.w(TAG, "[MyReceiver]" + intent.getAction() + " connected state change to " + connected);
-        } else {
-            Log.d(TAG, "[MyReceiver] Unhandled intent - " + intent.getAction());
         }
+    }
+
+    /**
+     * 实现自定义推送声音(原本无通知栏，加了该方法后又显示通知栏)
+     *
+     * @param context
+     * @param bundle
+     */
+    private void processCustomMessage(Context context, Bundle bundle) {
+        NotificationManager manger = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        //为了版本兼容  选择V7包下的NotificationCompat进行构造
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        //Ticker是状态栏显示的提示
+        builder.setTicker(bundle.getString(JPushInterface.EXTRA_TITLE));
+        //第一行内容  通常作为通知栏标题
+        builder.setContentTitle(bundle.getString(JPushInterface.EXTRA_TITLE));
+        //第二行内容 通常是通知正文
+        builder.setContentText(bundle.getString(JPushInterface.EXTRA_MESSAGE));
+        //可以点击通知栏的删除按钮删除
+        builder.setAutoCancel(true);
+        //系统状态栏显示的小图标
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        Notification notification = builder.build();
+        notification.sound = Uri.parse("android.resource://"
+                + context.getPackageName() + "/" + R.raw.push_notification_price_sound);
+        builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE | NotificationCompat.DEFAULT_LIGHTS);
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        Intent clickIntent = new Intent(); //点击通知之后要发送的广播
+        int id = (int) (System.currentTimeMillis() / 1000);
+        //        clickIntent.addCategory(MyApplication.getAppPackageName(context));
+        clickIntent.setAction(JPushInterface.ACTION_NOTIFICATION_OPENED);
+        clickIntent.putExtra(JPushInterface.EXTRA_EXTRA, bundle.getString(JPushInterface.EXTRA_EXTRA));
+        PendingIntent contentIntent = PendingIntent.getBroadcast(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.contentIntent = contentIntent;
+        manger.notify(id, notification);
     }
 }

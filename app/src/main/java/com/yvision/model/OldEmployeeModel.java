@@ -15,12 +15,21 @@ public class OldEmployeeModel implements Serializable {
     private String StoreName;
     private String Gender;
     private String DeptName;
+    private String Company;
     private String Pic;
 
     private String IsAttend;
     private String IsVisitor;
     private String IsVip;
     private String IsDoorAccess;
+
+    public String getCompany() {
+        return Company;
+    }
+
+    public void setCompany(String company) {
+        Company = company;
+    }
 
     public String getIsAttend() {
         return IsAttend;

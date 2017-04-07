@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:custom="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -10,12 +11,253 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/layout_topbar"
-        android:layout_toRightOf="@+id/layout_btn"
         android:background="@drawable/list_style"/>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewPaper"
-        android:layout_width="match_parent"
+    <com.yvision.widget.FloatActionButton
+        android:id="@+id/floatActionButton"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@android:drawable/ic_input_add"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        custom:bg_color="@color/common_bg_color"
+        android:tint="@android:color/white"
+        android:layout_toLeftOf="@+id/scrollView"/>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_toRightOf="@+id/listView"></android.support.v4.view.ViewPager>
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/listView"
+        android:background="@android:color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/layout_name"
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:id="@+id/tv_name1"
+                    android:layout_width="200dp"
+                    android:layout_height="49dp"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="25dp"
+                    android:text="@string/msg_name"
+                    android:textColor="@color/cl_text_common"
+                    android:textSize="@dimen/common_textSize_default16"/>
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="49dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/tv_name1"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/cl_text_common"
+                    android:textSize="@dimen/common_textSize_default16"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/tv_name1"
+                    android:background="@color/cl_text_common">
+                </View>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/layout_gender"
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:id="@+id/tv_gender1"
+                    android:layout_width="200dp"
+                    android:layout_height="49dp"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="25dp"
+                    android:text="@string/msg_gender"
+                    android:textColor="@color/cl_text_common"
+                    android:textSize="@dimen/common_textSize_default16"/>
+
+                <TextView
+                    android:id="@+id/tv_gender"
+                    android:layout_width="match_parent"
+                    android:layout_height="49dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/tv_gender1"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/cl_text_common"
+                    android:textSize="@dimen/common_textSize_default16"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/tv_gender1"
+                    android:background="@color/cl_text_common">
+                </View>
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/layout_id"
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:id="@+id/tv_id1"
+                    android:layout_width="200dp"
+                    android:layout_height="49dp"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="25dp"
+                    android:text="@string/msg_id"
+                    android:textColor="@color/cl_text_common"
+                    android:textSize="@dimen/common_textSize_default16"/>
+
+                <TextView
+                    android:id="@+id/tv_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="49dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/tv_id1"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/cl_text_common"
+                    android:textSize="@dimen/common_textSize_default16"/>
+
+                <View
+                    android:id="@+id/view4"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/tv_id1"
+                    android:background="@color/cl_text_common">
+                </View>
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/layout_company"
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:id="@+id/tv_company1"
+                    android:layout_width="200dp"
+                    android:layout_height="49dp"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="25dp"
+                    android:text="@string/msg_company"
+                    android:textColor="@color/cl_text_common"
+                    android:textSize="@dimen/common_textSize_default16"/>
+
+                <TextView
+                    android:id="@+id/tv_company"
+                    android:layout_width="match_parent"
+                    android:layout_height="49dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/tv_company1"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/cl_text_common"
+                    android:textSize="@dimen/common_textSize_default16"
+                    />
+
+                <View
+                    android:id="@+id/view5"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/tv_company1"
+                    android:background="@color/cl_text_common">
+                </View>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/layout_dept"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                >
+
+                <TextView
+                    android:id="@+id/tv_dept1"
+                    android:layout_width="200dp"
+                    android:layout_height="49dp"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="25dp"
+                    android:text="@string/msg_dept"
+                    android:textColor="@color/cl_text_common"
+                    android:textSize="@dimen/common_textSize_default16"/>
+
+                <TextView
+                    android:id="@+id/tv_dept"
+                    android:layout_width="match_parent"
+                    android:layout_height="49dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/tv_dept1"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/cl_text_common"
+                    android:textSize="@dimen/common_textSize_default16"/>
+
+                <View
+                    android:id="@+id/viewdept"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/tv_dept1"
+                    android:background="@color/cl_text_common">
+                </View>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/layout_attendType"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                >
+
+                <TextView
+                    android:id="@+id/tv_attendType1"
+                    android:layout_width="200dp"
+                    android:layout_height="49dp"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="25dp"
+                    android:text="@string/msg_attendType"
+                    android:textColor="@color/cl_text_common"
+                    android:textSize="@dimen/common_textSize_default16"/>
+
+                <TextView
+                    android:id="@+id/tv_attendType"
+                    android:layout_width="match_parent"
+                    android:layout_height="49dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/tv_attendType1"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/cl_text_common"
+                    android:textSize="@dimen/common_textSize_default16"/>
+
+                <View
+                    android:id="@+id/viewaattendType"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/tv_attendType1"
+                    android:background="@color/cl_text_common">
+                </View>
+            </RelativeLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
 </RelativeLayout>

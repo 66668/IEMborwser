@@ -11,9 +11,17 @@
     <!-- tab背景颜色-->
     <color name="slider_bg_select_color">#1583bf</color>
     <color name="slider_bg_unselect_color">#1e94d4</color>
+    <color name="common_topbar_bgcolor">#1E94D4</color>
     <!-- tab字体颜色-->
     <color name="slider_tv_select_color">#FFF</color>
     <color name="slider_tv_unselect_color">#e6e4e4</color>
     <color name="cl_text_common">#333333</color>
 
+
+    <color name="whitegray">#caeae5e5</color>
+    <color name="bar_line">#bbbbbb</color>
+
+    <color name="btn_bg">#1E94D4</color> <!-- 按钮背景色 -->
+    <color name="btn_bg_off">#1E94D4</color> <!-- 按钮背景色(失效状态) -->
+    <color name="btn_bg_on">#173c6f</color>
 </resources>

@@ -6,15 +6,39 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="75dp">
+        android:layout_height="75dp"
+        android:gravity="center_vertical">
+
+        <com.yvision.widget.CircleImageView
+            android:id="@+id/img_photo"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"/>
 
         <TextView
             android:id="@+id/tv_msg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="33dp"
+            android:layout_alignParentTop="true"
             android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/img_photo"
+            android:padding="5dp"
             android:paddingLeft="5dp"
+            android:text="消息"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/common_textSize_default14"/>
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_below="@+id/tv_msg"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/img_photo"
+            android:padding="5dp"
+            android:paddingLeft="5dp"
+            android:text="时间"
             android:textColor="@android:color/black"
             android:textSize="@dimen/common_textSize_default14"/>
     </RelativeLayout>

@@ -71,6 +71,7 @@ public class ListDataFragment extends BaseFragment {
     //考勤 vip 门禁 通用参数
     private CircleImageView photo_default;
     private CircleImageView photo_cap;
+
     private TextView tv_name;
     private TextView tv_id;
     private TextView tv_company;
@@ -215,7 +216,7 @@ public class ListDataFragment extends BaseFragment {
             return;
         } else {
             //判断数据是否是今日，不是就清空存储
-            String oldTime = listdate.get(listdate.size() - 1).getDate();
+            String oldTime = listdate.get(listdate.size() - 1).getDateTime();
             String newTime = Utils.getCurrentDate();
             String oldDay = oldTime.substring(oldTime.lastIndexOf("-"), oldTime.indexOf(" "));
             String newDay = newTime.substring(newTime.lastIndexOf("-"), newTime.indexOf(" "));
@@ -248,6 +249,12 @@ public class ListDataFragment extends BaseFragment {
                     AttendModel model = (AttendModel) msg.obj;
                     saveModel(model);
                     dialogShow(model);
+                    //listView显示
+                    listdate = new ArrayList<>();
+                    listdate.clear();
+                    listdate.add(model);
+                    adapter.insertEntityList(listdate);
+                    listView.setAdapter(adapter);
                     break;
                 case GET_ATTEND_SUCCESS:
                     AttendDetailModel detailModel = (AttendDetailModel) msg.obj;
@@ -259,6 +266,16 @@ public class ListDataFragment extends BaseFragment {
             }
         }
     };
+
+    //弹窗显示数据
+    private void dialogShow(AttendModel model) {
+        String message = model.getMessage();
+        String Type = model.getType();
+        String time = model.getDateTime();
+        //弹窗提示
+        JpushMsgToast.makeText(getActivity(), Type, message, time, Toast.LENGTH_SHORT).show();
+
+    }
 
     /**
      * 普通考勤展示
@@ -285,7 +302,6 @@ public class ListDataFragment extends BaseFragment {
     //数据保存
     private void saveModel(AttendModel model) {
         dao.saveModel(model);
-        Log.d("SJY", "以保存");
     }
 
     /**
@@ -310,20 +326,6 @@ public class ListDataFragment extends BaseFragment {
             }
         }
 
-    }
-
-    //弹窗显示数据
-    private void dialogShow(AttendModel model) {
-        String message = model.getMessage();
-        String Type = model.getType();
-        //弹窗提示
-        JpushMsgToast.makeText(getActivity(), Type, message, Toast.LENGTH_SHORT).show();
-        //listView显示
-        listdate = new ArrayList<>();
-        listdate.clear();
-        listdate.add(model);
-        adapter.insertEntityList(listdate);
-        listView.setAdapter(adapter);
     }
 
 
@@ -379,6 +381,8 @@ public class ListDataFragment extends BaseFragment {
         //
         imgLoader.clearMemoryCache();
         imgLoader.destroy();
+        //item的imgLoader清空
+        adapter.destroy();
     }
 
     //重写setMenuVisibility方法，不然会出现叠层的现象

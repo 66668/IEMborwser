@@ -2,19 +2,21 @@ package com.yvision.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.yvision.AddNewAttenderActivity;
+import com.yvision.AddNewViperActivity;
 import com.yvision.R;
 import com.yvision.adapter.RegisterListAdapter;
 import com.yvision.base.BaseFragment;
@@ -23,6 +25,7 @@ import com.yvision.dialog.Loading;
 import com.yvision.helper.UserHelper;
 import com.yvision.model.OldEmployeeModel;
 import com.yvision.utils.PageUtil;
+import com.yvision.widget.FloatActionButton;
 
 import java.util.ArrayList;
 
@@ -41,6 +44,16 @@ public class RegistFragment extends BaseFragment {
     private boolean ifLoading = false;//标记
     private ArrayList<OldEmployeeModel> listdate;
     private int pageSize = 20;
+
+
+    private TextView tv_name;
+    private TextView tv_id;
+    private TextView tv_company;
+    private TextView tv_dept;
+    private TextView tv_gender;
+    private TextView tv_attendType;
+    private com.yvision.widget.FloatActionButton floatActionButton;
+
     // 常量
     private static final int GET_DATA_SUCCESS = -39;// 获取所有数据列表 标志
     private static final int GET_NONE_NEWDATA = -35;//没有新数据
@@ -65,6 +78,7 @@ public class RegistFragment extends BaseFragment {
         //布局详细操作（可添加多个方法）
         initViews(view);
         getData();
+        initListener();
     }
 
 
@@ -76,12 +90,66 @@ public class RegistFragment extends BaseFragment {
     private void initViews(View view) {
         listView = (ListView) view.findViewById(R.id.listView);
 
+        tv_name = (TextView) view.findViewById(R.id.tv_name);
+        tv_id = (TextView) view.findViewById(R.id.tv_id);
+        tv_company = (TextView) view.findViewById(R.id.tv_company);
+        tv_dept = (TextView) view.findViewById(R.id.tv_dept);
+        tv_gender = (TextView) view.findViewById(R.id.tv_gender);
+        tv_attendType = (TextView) view.findViewById(R.id.tv_attendType);
+        floatActionButton = (FloatActionButton) view.findViewById(R.id.floatActionButton);
+
         adapter = new RegisterListAdapter(getActivity());
         listView.setAdapter(adapter);
         model = new OldEmployeeModel();
     }
 
-    //从存储中获取数据
+    /**
+     * 监听
+     */
+
+    private void initListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                OldEmployeeModel model = (OldEmployeeModel) adapter.getItem(position);
+                setShow(model);
+            }
+        });
+        floatActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(getActivity())
+                        .setCancelable(false)    //不响应back按钮
+                        .setTitle("选择注册类型：")
+                        .setItems(new String[]{"考勤", "VIP"}, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case 0:
+                                        Intent intent = new Intent(getActivity(),AddNewAttenderActivity.class);
+                                        startActivity(intent);
+                                        dialog.dismiss();
+                                        break;
+                                    case 1:
+                                        Intent intent2 = new Intent(getActivity(),AddNewViperActivity.class);
+                                        startActivity(intent2);
+                                        dialog.dismiss();
+                                        break;
+                                }
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .create().show();
+            }
+        });
+    }
+
+    //获取数据
     private void getData() {
         if (ifLoading) {
             return;
@@ -123,7 +191,6 @@ public class RegistFragment extends BaseFragment {
             switch (msg.what) {
                 case GET_DATA_SUCCESS://加载全部/今天
                     listdate = (ArrayList) msg.obj;
-
                     adapter.setEntityList(listdate);
                     //数据处理，只存最小值
                     ifLoading = false;
@@ -139,21 +206,36 @@ public class RegistFragment extends BaseFragment {
         }
     };
 
+    private void setShow(OldEmployeeModel model) {
+        tv_name.setText(model.getEmployeeName() != null ? model.getEmployeeName() : "无");
+        tv_gender.setText(model.getGender() != null ? model.getGender() : "无");
+        tv_id.setText(model.getWrokId() != null ? model.getWrokId() : "无");
+        tv_dept.setText(model.getDeptName() != null ? model.getDeptName() : "无");
+        tv_company.setText(model.getCompany() != null ? model.getCompany() : "无");
+
+        StringBuilder builder = new StringBuilder();
+        if (model.getIsAttend().contains("1")) {
+            builder.append(" 考勤 ");
+            tv_attendType.setText(builder.toString());
+        } else if (model.getIsDoorAccess().contains("1")) {
+            builder.append(" 门禁 ");
+            tv_attendType.setText(builder.toString());
+
+        } else if (model.getIsVip().contains("1")) {
+            builder.append(" VIP ");
+            tv_attendType.setText(builder.toString());
+
+        } else if (model.getIsVisitor().contains("1")) {
+            builder.append(" 访客 ");
+            tv_attendType.setText(builder.toString());
+
+        }
+
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        //注册广播
-        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getActivity());
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.intent.action.CART_BROADCAST");//建议把它写一个公共的变量，这里方便阅读就不写了。
-        BroadcastReceiver mItemViewListClickReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                System.out.println("OK");
-            }
-        };
-        broadcastManager.registerReceiver(mItemViewListClickReceiver, intentFilter);
     }
 
     @Override

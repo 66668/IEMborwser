@@ -11,7 +11,24 @@ public class AttendModel implements Serializable {
     private String message;
     private String Type;
     private String Id;
-    private String date;
+    private String Pic;
+    private String DateTime;
+
+    public String getPic() {
+        return Pic;
+    }
+
+    public void setPic(String pic) {
+        Pic = pic;
+    }
+
+    public String getDateTime() {
+        return DateTime;
+    }
+
+    public void setDateTime(String dateTime) {
+        DateTime = dateTime;
+    }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -39,13 +56,5 @@ public class AttendModel implements Serializable {
 
     public void setId(String id) {
         Id = id;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 }
