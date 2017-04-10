@@ -67,8 +67,8 @@ public class EditSavePhotoFragment extends Fragment {
 
         photoImageView.getLayoutParams().height = imageViewHeight;
         photoImageView.getLayoutParams().width = imageViewHeight;
-        topCoverView.getLayoutParams().height = coverHeight;
-        btnCoverView.getLayoutParams().height = coverHeight;
+        //        topCoverView.getLayoutParams().height = coverHeight;
+        //        btnCoverView.getLayoutParams().height = coverHeight;
         Log.d(TAG, "topCoverView = " + coverHeight);
         Log.d(TAG, "photoImageView = " + imageViewHeight);
         Log.d(TAG, "btnCoverView = " + coverHeight);
@@ -92,10 +92,17 @@ public class EditSavePhotoFragment extends Fragment {
             Bitmap oldBitmap = bitmap;
 
             Matrix matrix = new Matrix();
-            matrix.postRotate(rotation);
 
-            bitmap = Bitmap.createBitmap(
-                    oldBitmap, 0, 0, oldBitmap.getWidth(), oldBitmap.getHeight(), matrix, false
+            //matrix.postRotate(rotation);此处if我自己添加，原因是有一种情况，图片拍完后180读旋转显示，这种情况可以正常用，但是仍无发解决
+            if(rotation == 180){
+                Log.d(TAG, "rotatePicture: rotation == 180");
+                matrix.postRotate(0);
+            }else{
+                Log.d(TAG, "rotatePicture: rotation != 180");
+                matrix.postRotate(rotation);
+            }
+
+            bitmap = Bitmap.createBitmap(oldBitmap, 0, 0, oldBitmap.getWidth(), oldBitmap.getHeight(), matrix, false
             );
 
             oldBitmap.recycle();

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -19,6 +20,7 @@ import com.yvision.fragment.CameraFragment;
  */
 
 public class MyChangeCameraActivity extends BaseActivity {
+    private static final String TAG = "MyChangeCameraActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +42,7 @@ public class MyChangeCameraActivity extends BaseActivity {
 
         if (savedInstanceState == null) {
             // 主Activity以frame填充Activity的方式交互管理Fragment
-
+            Log.d(TAG, "CameraFragment<---savedInstanceState == null=" + (savedInstanceState == null));
             //相机详细操作
             getSupportFragmentManager()
                     .beginTransaction()
@@ -51,6 +53,7 @@ public class MyChangeCameraActivity extends BaseActivity {
 
     //保存图片路径，返回给回调函数使用
     public void returnPhotoUri(Uri uri) {
+        Log.d(TAG, "保存图片路径，返回给回调函数使用");
 
         Intent data = new Intent();
         data.setData(uri);

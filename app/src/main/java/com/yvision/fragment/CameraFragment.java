@@ -18,7 +18,9 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yvision.R;
@@ -59,12 +61,10 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
      */
     private SquareSurfacePreview mSurfaceView;
     private SurfaceHolder mSurfaceHolder;
-    private View btnCoverView;//动态布局
-    private View topCoverView;//动态布局
-    private int mDisplayOrientation;
-    private int mLayoutOrientation;
-
+    private View topCoverView;//顶部view
+    private View btnCoverView;//底部view
     //拍照三个按钮
+    private LinearLayout camera_tools_view;
     private ImageView takePhotoBtn;//拍照按钮
     private View changeCameraFlashModeBtn;
     private TextView autoFlashIcon;
@@ -77,7 +77,12 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     private String mFlashMode;
     private Camera mCamera = null;
     private CameraOrientationListener mOrientationListener;
+    private int mDisplayOrientation;
+    private int mLayoutOrientation;
 
+    //屏幕宽高
+    private int screenHeight;
+    private int screenWidth;
 
     public static Fragment newInstance() {
         return new CameraFragment();
@@ -102,17 +107,19 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (savedInstanceState == null) {
+            Log.d(TAG, "savedInstanceState == null");
             mCameraID = getBackCameraID();//获取后置摄像头的mCameraID
             mFlashMode = Camera.Parameters.FLASH_MODE_AUTO;//auto
         } else {
+            Log.d(TAG, "savedInstanceState != null");
             mCameraID = savedInstanceState.getInt(CAMERA_ID_KEY);
             mFlashMode = savedInstanceState.getString(CAMERA_FLASH_KEY);
             mPreviewHeight = savedInstanceState.getInt(PREVIEW_HEIGHT_KEY);
         }
+
         initMyView(view);
 
         if (mCoverHeight == 0) {
-            Log.d(TAG, "mCoverHeight == 0");
             //观察者模式
             ViewTreeObserver observer = mSurfaceView.getViewTreeObserver();
             observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -122,7 +129,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
                     mPreviewHeight = mSurfaceView.getHeight();
                     mCoverHeight = (mPreviewHeight - width) / 2;
 
-                    Log.d(TAG, "preview width =" + width + " height= " + mPreviewHeight + " mCoverHeight=" + mCoverHeight);
+                    Log.d(TAG, "preview width " + width + " height " + mPreviewHeight + "mCoverHeight=" + mCoverHeight);
 
                     topCoverView.getLayoutParams().height = mCoverHeight;
                     btnCoverView.getLayoutParams().height = mCoverHeight;
@@ -136,7 +143,6 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
                 }
             });
         } else {
-            Log.d(TAG, "mCoverHeight != 0");
             topCoverView.getLayoutParams().height = mCoverHeight;
             btnCoverView.getLayoutParams().height = mCoverHeight;
         }
@@ -144,18 +150,26 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     }
 
     private void initMyView(View view) {
-
-        mOrientationListener.enable();//激活监听
+        btnCoverView = view.findViewById(R.id.cover_bottom_view);//底部view
+        topCoverView = view.findViewById(R.id.cover_top_view);//顶部view
+        camera_tools_view = (LinearLayout) view.findViewById(R.id.camera_tools_view);
         mSurfaceView = (SquareSurfacePreview) view.findViewById(R.id.camera_preview_view);
         mSurfaceView.getHolder().addCallback(CameraFragment.this);
-        topCoverView = view.findViewById(R.id.cover_top_view);//顶部view
-        btnCoverView = view.findViewById(R.id.cover_bottom_view);//底部view
 
         //拍照三个按钮
         takePhotoBtn = (ImageView) view.findViewById(R.id.capture_image_button);//拍照按钮
         changeCameraFlashModeBtn = view.findViewById(R.id.flash);
         autoFlashIcon = (TextView) view.findViewById(R.id.auto_flash_icon);
         swapCameraBtn = (ImageView) view.findViewById(R.id.change_camera);
+        changeCameraFlashModeBtn = getView().findViewById(R.id.flash);
+
+        mOrientationListener.enable();//激活监听
+
+        //获取屏幕高宽
+        WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        screenHeight = windowManager.getDefaultDisplay().getHeight();
+        screenWidth = windowManager.getDefaultDisplay().getWidth();
+        Log.d(TAG, "屏幕宽高：screenHeight=" + screenHeight + "-->screenWidth=" + screenWidth);
     }
 
     private void initListener() {
@@ -177,7 +191,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
                 } else {
                     mCameraID = getFrontCameraID();
                 }
-                Log.d(TAG, "切换摄像头mCamera=" + mCamera);
+                Log.d(TAG, "切换摄像头mCamera=" + (mCamera == null));
                 restartPreview();
             }
         });
@@ -280,6 +294,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         mSurfaceView.setCamera(null);
     }
 
+    //初始化Camera
     private void getCamera(int cameraID) {
         Log.d(TAG, "get camera with id " + cameraID);
 
@@ -291,6 +306,37 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         }
     }
 
+    /**
+     * 设置相机参数
+     */
+    private void setupCamera() {
+        Log.d(TAG, "setupCamera: ");
+        // Never keep a global parameters
+        Camera.Parameters parameters = mCamera.getParameters();
+
+        Camera.Size bestPreviewSize = determineBestPreviewSize(parameters);
+        Log.d(TAG, "CameraFragment--setupCamera--PreviewSize---" + "width=" + bestPreviewSize.width + "--height=" + bestPreviewSize.height);
+        //        parameters.setPreviewSize(bestPreviewSize.width, bestPreviewSize.height);
+        parameters.setPreviewSize(bestPreviewSize.width, bestPreviewSize.height);
+
+
+        // Set continuous picture focus, if it's supported
+        if (parameters.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        }
+
+
+        List<String> flashModes = parameters.getSupportedFlashModes();
+        if (flashModes != null && flashModes.contains(mFlashMode)) {
+            parameters.setFlashMode(mFlashMode);
+            changeCameraFlashModeBtn.setVisibility(View.VISIBLE);
+        } else {
+            changeCameraFlashModeBtn.setVisibility(View.INVISIBLE);
+        }
+
+        // Lock in the changes
+        mCamera.setParameters(parameters);
+    }
 
     /**
      * Determine the current display orientation and rotate the camera preview
@@ -305,18 +351,23 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 
         switch (rotation) {
             case Surface.ROTATION_0: {
+                Log.d(TAG, "degrees = 0");
                 degrees = 0;
                 break;
             }
             case Surface.ROTATION_90: {
+                Log.d(TAG, "degrees = 90");
                 degrees = 90;
                 break;
             }
             case Surface.ROTATION_180: {
+                Log.d(TAG, "degrees = 180");
+
                 degrees = 180;
                 break;
             }
             case Surface.ROTATION_270: {
+                Log.d(TAG, "degrees = 270");
                 degrees = 270;
                 break;
             }
@@ -334,62 +385,36 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         mDisplayOrientation = (cameraInfo.orientation - degrees + 360) % 360;
         mLayoutOrientation = degrees;
 
-        Log.d(TAG, "displayOrientation = " + displayOrientation);
-        Log.d(TAG, "mCamere = " + (mCamera != null));
-        mCamera.setDisplayOrientation(displayOrientation);
+        Log.d(TAG, "调整相机角度--determineDisplayOrientation--displayOrientation = " + displayOrientation);
+        mCamera.setDisplayOrientation(displayOrientation);//调整相机角度
     }
 
-    /**
-     * 设置相机参数
-     */
-    private void setupCamera() {
-        // Never keep a global parameters
-        Camera.Parameters parameters = mCamera.getParameters();
 
-        Camera.Size bestPreviewSize = determineBestPreviewSize(parameters);
-        Camera.Size bestPictureSize = determineBestPictureSize(parameters);
-        Log.d(TAG, "CameraFragment--setupCamera--PreviewSize---" + "width="+bestPreviewSize.width + "--height=" + bestPreviewSize.height);
-        parameters.setPreviewSize(bestPreviewSize.width, bestPreviewSize.height);
-        parameters.setPictureSize(bestPictureSize.width, bestPictureSize.height);
-
-
-        // Set continuous picture focus, if it's supported
-        if (parameters.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-        }
-
-        final View changeCameraFlashModeBtn = getView().findViewById(R.id.flash);
-        List<String> flashModes = parameters.getSupportedFlashModes();
-        if (flashModes != null && flashModes.contains(mFlashMode)) {
-            parameters.setFlashMode(mFlashMode);
-            changeCameraFlashModeBtn.setVisibility(View.VISIBLE);
-        } else {
-            changeCameraFlashModeBtn.setVisibility(View.INVISIBLE);
-        }
-
-        // Lock in the changes
-        mCamera.setParameters(parameters);
-    }
-
+    //相机预览尺寸
     private Camera.Size determineBestPreviewSize(Camera.Parameters parameters) {
         return determineBestSize(parameters.getSupportedPreviewSizes(), PREVIEW_SIZE_MAX_WIDTH);
     }
 
+    //拍照后预览尺寸
     private Camera.Size determineBestPictureSize(Camera.Parameters parameters) {
         return determineBestSize(parameters.getSupportedPictureSizes(), PICTURE_SIZE_MAX_WIDTH);
     }
 
+    //设置最佳宽高比尺寸
     private Camera.Size determineBestSize(List<Camera.Size> sizes, int widthThreshold) {
         Camera.Size bestSize = null;
         Camera.Size size;
         int numOfSizes = sizes.size();
         for (int i = 0; i < numOfSizes; i++) {
             size = sizes.get(i);
-            boolean isDesireRatio = (size.width / 4) == (size.height / 3);
-            boolean isBetterSize = (bestSize == null) || size.width > bestSize.width;
+
+            boolean isDesireRatio = (size.width / 4) == (size.height / 3);//最佳4：3尺寸选择 (size.width / 4) == (size.height / 3)
+            boolean isBetterSize = (bestSize == null) || size.width > bestSize.width;//选择最佳尺寸中最大的尺寸
 
             if (isDesireRatio && isBetterSize) {
                 bestSize = size;
+                //选中的最佳尺寸
+                Log.d(TAG, "determineBestSize: bestSize.width" + (bestSize.width) + "\nbestSize.height:" + bestSize.height);
             }
         }
 
@@ -466,6 +491,9 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         //        Uri uri = ImageUtility.savePicture(getActivity(), bitmap);
         Log.d(TAG, "mCoverHeight=" + mCoverHeight + "\nmPreviewHeight=" + mPreviewHeight);
 
+//        if(rotation == 180 || mCameraID == CameraInfo.CAMERA_FACING_FRONT){//对一种情况图做处理
+//            rotation = 0;
+//        }
         //拍照后图片预览和处理EditSavePhotoFragment
         getFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 EditSavePhotoFragment.newInstance(data, rotation, mCoverHeight, mPreviewHeight),
@@ -496,6 +524,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 
         private int normalize(int degrees) {
             if (degrees > 315 || degrees <= 45) {
+
                 return 0;
             }
 
