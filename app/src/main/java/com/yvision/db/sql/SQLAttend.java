@@ -71,7 +71,7 @@ public class SQLAttend extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor cursor = db.query(TABLE_NAME
                     , new String[]{"message", "Type", "date", "Id", "Pic"}
-                    , null, null, null, null, null);
+                    , null, null, null, null,  "date desc");
             cursor.moveToFirst();
             while (cursor.moveToNext()) {
                 String message = cursor.getString(cursor.getColumnIndex("message"));

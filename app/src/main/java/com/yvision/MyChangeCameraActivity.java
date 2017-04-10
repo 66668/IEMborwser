@@ -23,7 +23,8 @@ public class MyChangeCameraActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         requestWindowFeature(Window.FEATURE_NO_TITLE);// 无标题
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);// 无标题
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -39,6 +40,7 @@ public class MyChangeCameraActivity extends BaseActivity {
 
         if (savedInstanceState == null) {
             // 主Activity以frame填充Activity的方式交互管理Fragment
+
             //相机详细操作
             getSupportFragmentManager()
                     .beginTransaction()
@@ -47,8 +49,9 @@ public class MyChangeCameraActivity extends BaseActivity {
         }
     }
 
+    //保存图片路径，返回给回调函数使用
     public void returnPhotoUri(Uri uri) {
-        //保存图片路径，返回给回调函数使用
+
         Intent data = new Intent();
         data.setData(uri);
 

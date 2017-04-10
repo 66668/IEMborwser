@@ -35,37 +35,49 @@ import static android.hardware.Camera.open;
 
 /**
  * 相机详细操作
- *
- *  预览界面适应公司需求，为方形图
- *  可以切换摄像头
- *  拍照后 图片自动旋转处理，
- *
+ * <p>
+ * 预览界面适应公司需求，为方形图
+ * 可以切换摄像头
+ * 拍照后 图片自动旋转处理，
+ * <p>
  * Created by sjy on 2016/11/17.
  */
 
 public class CameraFragment extends Fragment implements SurfaceHolder.Callback, PictureCallback {
 
+    //常量
     public static final String TAG = "CameraFragment";//CameraFragment.class.getSimpleName()
     public static final String CAMERA_ID_KEY = "camera_id";
     public static final String CAMERA_FLASH_KEY = "flash_mode";
     public static final String PREVIEW_HEIGHT_KEY = "preview_height";
-
     private static final int PICTURE_SIZE_MAX_WIDTH = 1280;
     private static final int PREVIEW_SIZE_MAX_WIDTH = 640;
 
-    private int mCameraID = 0;
-    private String mFlashMode;
-    private Camera mCamera = null;
+
+    /*
+     * 控件
+     */
     private SquareSurfacePreview mSurfaceView;
     private SurfaceHolder mSurfaceHolder;
-
+    private View btnCoverView;//动态布局
+    private View topCoverView;//动态布局
     private int mDisplayOrientation;
     private int mLayoutOrientation;
 
+    //拍照三个按钮
+    private ImageView takePhotoBtn;//拍照按钮
+    private View changeCameraFlashModeBtn;
+    private TextView autoFlashIcon;
+    private ImageView swapCameraBtn;//切换按钮
+
+    //变量
     private int mCoverHeight;
     private int mPreviewHeight;
-
+    private int mCameraID = 0;
+    private String mFlashMode;
+    private Camera mCamera = null;
     private CameraOrientationListener mOrientationListener;
+
 
     public static Fragment newInstance() {
         return new CameraFragment();
@@ -83,34 +95,24 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView");
         return inflater.inflate(R.layout.fragment_camera, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         if (savedInstanceState == null) {
             mCameraID = getBackCameraID();//获取后置摄像头的mCameraID
-            Log.d(TAG, "onViewCreated--savedInstanceState == null-->getBackCameraID=" + mCameraID);
             mFlashMode = Camera.Parameters.FLASH_MODE_AUTO;//auto
         } else {
             mCameraID = savedInstanceState.getInt(CAMERA_ID_KEY);
-            Log.d(TAG, "onViewCreated--savedInstanceState != null-->getBackCameraID=" + mCameraID);
             mFlashMode = savedInstanceState.getString(CAMERA_FLASH_KEY);
             mPreviewHeight = savedInstanceState.getInt(PREVIEW_HEIGHT_KEY);
         }
-
-        mOrientationListener.enable();//激活监听
-
-        mSurfaceView = (SquareSurfacePreview) view.findViewById(R.id.camera_preview_view);
-        mSurfaceView.getHolder().addCallback(CameraFragment.this);
-
-        final View topCoverView = view.findViewById(R.id.cover_top_view);//顶部view
-        final View btnCoverView = view.findViewById(R.id.cover_bottom_view);//底部view
+        initMyView(view);
 
         if (mCoverHeight == 0) {
+            Log.d(TAG, "mCoverHeight == 0");
             //观察者模式
             ViewTreeObserver observer = mSurfaceView.getViewTreeObserver();
             observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -120,7 +122,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
                     mPreviewHeight = mSurfaceView.getHeight();
                     mCoverHeight = (mPreviewHeight - width) / 2;
 
-                    Log.d(TAG, "preview width " + width + " height " + mPreviewHeight + "mCoverHeight=" + mCoverHeight);
+                    Log.d(TAG, "preview width =" + width + " height= " + mPreviewHeight + " mCoverHeight=" + mCoverHeight);
 
                     topCoverView.getLayoutParams().height = mCoverHeight;
                     btnCoverView.getLayoutParams().height = mCoverHeight;
@@ -134,11 +136,37 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
                 }
             });
         } else {
+            Log.d(TAG, "mCoverHeight != 0");
             topCoverView.getLayoutParams().height = mCoverHeight;
             btnCoverView.getLayoutParams().height = mCoverHeight;
         }
+        initListener();
+    }
 
-        final ImageView swapCameraBtn = (ImageView) view.findViewById(R.id.change_camera);
+    private void initMyView(View view) {
+
+        mOrientationListener.enable();//激活监听
+        mSurfaceView = (SquareSurfacePreview) view.findViewById(R.id.camera_preview_view);
+        mSurfaceView.getHolder().addCallback(CameraFragment.this);
+        topCoverView = view.findViewById(R.id.cover_top_view);//顶部view
+        btnCoverView = view.findViewById(R.id.cover_bottom_view);//底部view
+
+        //拍照三个按钮
+        takePhotoBtn = (ImageView) view.findViewById(R.id.capture_image_button);//拍照按钮
+        changeCameraFlashModeBtn = view.findViewById(R.id.flash);
+        autoFlashIcon = (TextView) view.findViewById(R.id.auto_flash_icon);
+        swapCameraBtn = (ImageView) view.findViewById(R.id.change_camera);
+    }
+
+    private void initListener() {
+        //拍照按钮
+        takePhotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takePicture();
+            }
+        });
+
         //切换摄像头
         swapCameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,8 +183,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         });
 
         //拍照类型按钮(可无选项)
-        final View changeCameraFlashModeBtn = view.findViewById(R.id.flash);
-        final TextView autoFlashIcon = (TextView) view.findViewById(R.id.auto_flash_icon);
+
         changeCameraFlashModeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,15 +199,6 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
                 }
                 //设置相机参数
                 setupCamera();
-            }
-        });
-
-        //拍照按钮
-        final ImageView takePhotoBtn = (ImageView) view.findViewById(R.id.capture_image_button);
-        takePhotoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                takePicture();
             }
         });
     }
@@ -225,35 +243,6 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     }
 
 
-    private void restartPreview() {
-        stopCameraPreview();
-        mCamera.release();
-        getCamera(mCameraID);
-        startCameraPreview();
-    }
-
-
-    /**
-     * Stop the camera preview
-     */
-    private void stopCameraPreview() {
-        mCamera.stopPreview();
-
-        mCamera.setPreviewCallback(null);//
-
-        mSurfaceView.setCamera(null);
-    }
-
-    private void getCamera(int cameraID) {
-        Log.d(TAG, "get camera with id " + cameraID);
-        try {
-            mCamera = open(cameraID);
-            mSurfaceView.setCamera(mCamera);
-        } catch (Exception e) {
-            Log.d(TAG, "Can't open camera with id " + cameraID + "error:" + e.getMessage());
-        }
-    }
-
     /**
      * Start the camera preview
      */
@@ -269,6 +258,39 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
             e.printStackTrace();
         }
     }
+
+    /**
+     * Restart
+     */
+    private void restartPreview() {
+        stopCameraPreview();
+        mCamera.release();
+        getCamera(mCameraID);
+        startCameraPreview();
+    }
+
+    /**
+     * Stop the camera preview
+     */
+    private void stopCameraPreview() {
+        mCamera.stopPreview();
+
+        mCamera.setPreviewCallback(null);//
+
+        mSurfaceView.setCamera(null);
+    }
+
+    private void getCamera(int cameraID) {
+        Log.d(TAG, "get camera with id " + cameraID);
+
+        try {
+            mCamera = open(cameraID);
+            mSurfaceView.setCamera(mCamera);
+        } catch (Exception e) {
+            Log.d(TAG, "Can't open camera with id " + cameraID + "error:" + e.getMessage());
+        }
+    }
+
 
     /**
      * Determine the current display orientation and rotate the camera preview
@@ -326,8 +348,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 
         Camera.Size bestPreviewSize = determineBestPreviewSize(parameters);
         Camera.Size bestPictureSize = determineBestPictureSize(parameters);
-        Log.d(TAG, "CameraFragment--setupCamera--PreviewSize=" + bestPreviewSize.width + "--"
-                + bestPreviewSize.height);
+        Log.d(TAG, "CameraFragment--setupCamera--PreviewSize---" + "width="+bestPreviewSize.width + "--height=" + bestPreviewSize.height);
         parameters.setPreviewSize(bestPreviewSize.width, bestPreviewSize.height);
         parameters.setPictureSize(bestPictureSize.width, bestPictureSize.height);
 
