@@ -13,6 +13,7 @@ import com.yvision.common.MyException;
 import com.yvision.common.NetworkManager;
 import com.yvision.db.entity.UserEntity;
 import com.yvision.model.AttendDetailModel;
+import com.yvision.model.AttendModel;
 import com.yvision.model.OldEmployeeImgModel;
 import com.yvision.model.OldEmployeeModel;
 import com.yvision.utils.APIUtils;
@@ -265,7 +266,7 @@ public class UserHelper {
             throw httpResult.getError();
         }
 
-        return (new Gson()).fromJson(httpResult.jsonArray.toString(),  new TypeToken<List<OldEmployeeImgModel>>() {
+        return (new Gson()).fromJson(httpResult.jsonArray.toString(), new TypeToken<List<OldEmployeeImgModel>>() {
         }.getType());
     }
 
@@ -288,6 +289,7 @@ public class UserHelper {
 
         return (new Gson()).fromJson(httpResult.jsonObject.toString(), AttendDetailModel.class);
     }
+
     /**
      * 14获取 vip 人脸库
      */
@@ -298,7 +300,7 @@ public class UserHelper {
             throw new MyException(R.string.network_invalid);// 亲，您的网络不给力，请检查网络！
         }
         String companyID = UserHelper.getCurrentUser().getStoreID();//公司编号companyID
-        String url = WebUrl.GET_FACE_DATEBASE_BY_COMPANYID +"/"+ companyID + "/3";
+        String url = WebUrl.GET_FACE_DATEBASE_BY_COMPANYID + "/" + companyID + "/3";
         HttpResult httpResult = APIUtils.getForObject(url);
 
         if (httpResult.hasError()) {
@@ -318,6 +320,7 @@ public class UserHelper {
         Log.d("SJY", "人脸库jsonArray=" + httpResult.jsonArray.toString());
         return httpResult.jsonArray;
     }
+
     /**
      * 14获取 考勤 人脸库
      */
@@ -330,7 +333,7 @@ public class UserHelper {
         String companyID = UserHelper.getCurrentUser().getStoreID();//公司编号companyID
 
         //        String url = WebUrl.GET_FACE_DATEBASE_BY_COMPANYID +"?companyID="+ companyID + "&groupType=1";
-        String url = WebUrl.GET_FACE_DATEBASE_BY_COMPANYID +"/"+ companyID + "/1";
+        String url = WebUrl.GET_FACE_DATEBASE_BY_COMPANYID + "/" + companyID + "/1";
 
         HttpResult httpResult = APIUtils.getForObject(url);
         if (httpResult.hasError()) {
@@ -386,6 +389,7 @@ public class UserHelper {
         //        }
         return httpResult.jsonArray;
     }
+
     /**
      * 15新员工注册
      *
@@ -408,4 +412,22 @@ public class UserHelper {
         return httpResult.code;
     }
 
+    /**
+     * 获取离线推送
+     */
+    public static ArrayList<AttendModel> getOffLineDate(Context context, HttpParameter params) throws MyException {
+        if (!NetworkManager.isNetworkAvailable(context)) {
+            throw new MyException(R.string.network_invalid);// 亲，您的网络不给力，请检查网络！
+        }
+        // 访问服务端：http://192.168.1.127:2016/api/Attend/RegAttFace
+        HttpResult httpResult = APIUtils.postForObject(WebUrl.GET_OFFLINE_DATA, params);
+
+        if (httpResult.hasError()) {
+            throw httpResult.getError();
+        }
+
+        return (new Gson()).fromJson(httpResult.jsonArray.toString(), new TypeToken<ArrayList<AttendModel>>() {
+        }.getType());
+
+    }
 }

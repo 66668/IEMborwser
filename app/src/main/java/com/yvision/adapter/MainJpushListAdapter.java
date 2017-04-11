@@ -107,7 +107,7 @@ public class MainJpushListAdapter extends BaseAdapter {
         //item数据显示
         AttendModel model = (AttendModel) entityList.get(position);
         holder.tv_messge.setText(model.getMessage());
-        holder.tv_time.setText(model.getDateTime());
+        holder.tv_time.setText(model.getCapTime());
         holder.tv_messge.setText(model.getMessage());
         imgLoader.displayImage(model.getPic(), holder.img_photo, imgOptions);
         return convertView;

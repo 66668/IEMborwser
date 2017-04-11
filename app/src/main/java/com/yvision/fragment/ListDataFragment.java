@@ -22,9 +22,12 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.squareup.leakcanary.RefWatcher;
 import com.yvision.R;
 import com.yvision.adapter.MainJpushListAdapter;
+import com.yvision.application.MyApplication;
 import com.yvision.base.BaseFragment;
+import com.yvision.common.HttpParameter;
 import com.yvision.common.ImageLoadingConfig;
 import com.yvision.common.MyException;
 import com.yvision.db.sql.SQLAttend;
@@ -51,6 +54,7 @@ public class ListDataFragment extends BaseFragment {
     private static final int GET_DOOR_SUCCESS = -42;
     private static final int GET_ATTEND_SUCCESS = -43;
     private static final int GET_VISITOR_SUCCESS = -44;
+    private static final int OFFLINE_SUCCESS = -45;
 
     private static final int GET_DOOR_FAILED = -39;
     private static final int GET_VISITOR_FAILED = -38;
@@ -216,7 +220,7 @@ public class ListDataFragment extends BaseFragment {
             return;
         } else {
             //判断数据是否是今日，不是就清空存储
-            String oldTime = listdate.get(listdate.size() - 1).getDateTime();
+            String oldTime = listdate.get(listdate.size() - 1).getCapTime();
             String newTime = Utils.getCurrentDate();
             String oldDay = oldTime.substring(oldTime.lastIndexOf("-"), oldTime.indexOf(" "));
             String newDay = newTime.substring(newTime.lastIndexOf("-"), newTime.indexOf(" "));
@@ -231,8 +235,30 @@ public class ListDataFragment extends BaseFragment {
             } else {//只保留当天记录，清除数据库
                 dao.clearDb();
             }
+            //获取app离线的数据，并保存
+            getOffLineDate(listdate);
 
         }
+
+    }
+
+    private void getOffLineDate(final ArrayList<AttendModel> oldListDate) {
+        final String CurrentTime = Utils.getCurrentDate();
+
+        Loading.noDialogRun(getActivity(), new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ArrayList<AttendModel> offLineDate = new ArrayList<AttendModel>();
+                    offLineDate = UserHelper.getOffLineDate(getActivity(), HttpParameter.create()
+                            .add("maxTime ", CurrentTime)
+                            .add("minTime", oldListDate.get(0).getCapTime()));
+                    handler.sendMessage(handler.obtainMessage(OFFLINE_SUCCESS, offLineDate));
+                } catch (MyException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
     }
 
@@ -263,6 +289,13 @@ public class ListDataFragment extends BaseFragment {
                 case GET_ATTEND_FAILED:
                     PageUtil.DisplayToast((String) msg.obj);
                     break;
+
+                case OFFLINE_SUCCESS:
+                    ArrayList<AttendModel> offLineDate = new ArrayList<>();
+                    offLineDate = (ArrayList<AttendModel>) msg.obj;
+                    adapter.insertEntityList((ArrayList) offLineDate);
+                    listView.setAdapter(adapter);
+                    break;
             }
         }
     };
@@ -271,7 +304,7 @@ public class ListDataFragment extends BaseFragment {
     private void dialogShow(AttendModel model) {
         String message = model.getMessage();
         String Type = model.getType();
-        String time = model.getDateTime();
+        String time = model.getCapTime();
         //弹窗提示
         JpushMsgToast.makeText(getActivity(), Type, message, time, Toast.LENGTH_SHORT).show();
 
@@ -383,6 +416,10 @@ public class ListDataFragment extends BaseFragment {
         imgLoader.destroy();
         //item的imgLoader清空
         adapter.destroy();
+
+        //使用 RefWatcher 监控 Fragment
+        RefWatcher refWatcher = MyApplication.getRefWatcher(getActivity());
+        refWatcher.watch(this);
     }
 
     //重写setMenuVisibility方法，不然会出现叠层的现象

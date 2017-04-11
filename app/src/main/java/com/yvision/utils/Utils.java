@@ -42,11 +42,9 @@ import java.net.SocketException;
 import java.security.MessageDigest;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
@@ -764,7 +762,6 @@ public class Utils {
             is = new FileInputStream(filePath);
             return BitmapFactory.decodeStream(is, null, opt);
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return null;
         } finally {
@@ -772,7 +769,6 @@ public class Utils {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }

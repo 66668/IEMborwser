@@ -59,7 +59,7 @@ public class SQLAttend extends SQLiteOpenHelper {
         values.put("Type", model.getType());
         values.put("Id", model.getId());
         values.put("Pic", model.getPic());
-        values.put("date", model.getDateTime());
+        values.put("date", model.getCapTime());
         db.insert(TABLE_NAME, null, values);
         db.close();
     }
@@ -82,7 +82,7 @@ public class SQLAttend extends SQLiteOpenHelper {
 
                 AttendModel model = new AttendModel();
 
-                model.setDateTime(date);
+                model.setCapTime(date);
                 model.setType(Type);
                 model.setId(Id);
                 model.setMessage(message);

@@ -8,11 +8,11 @@ import java.io.Serializable;
 
 public class AttendModel implements Serializable {
     private static final long serialVersionUID = 1L;
-    private String message;
+    private String Message ;
     private String Type;
     private String Id;
     private String Pic;
-    private String DateTime;
+    private String CapTime ;
 
     public String getPic() {
         return Pic;
@@ -22,24 +22,24 @@ public class AttendModel implements Serializable {
         Pic = pic;
     }
 
-    public String getDateTime() {
-        return DateTime;
+    public String getCapTime () {
+        return CapTime ;
     }
 
-    public void setDateTime(String dateTime) {
-        DateTime = dateTime;
+    public void setCapTime (String CapTime ) {
+        CapTime  = CapTime ;
     }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
 
-    public String getMessage() {
-        return message;
+    public String getMessage () {
+        return Message ;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessage (String Message ) {
+        this.Message  = Message ;
     }
 
     public String getType() {

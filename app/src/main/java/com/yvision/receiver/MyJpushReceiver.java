@@ -57,7 +57,7 @@ public class MyJpushReceiver extends BroadcastReceiver {
 
                 model.setId(Id);
                 model.setType(Type);
-                model.setDateTime(DateTime);
+                model.setCapTime(DateTime);
                 model.setPic(Pic);
             } catch (JSONException e) {
                 e.printStackTrace();
