@@ -14,8 +14,10 @@ import com.yvision.common.NetworkManager;
 import com.yvision.db.entity.UserEntity;
 import com.yvision.model.AttendDetailModel;
 import com.yvision.model.AttendModel;
+import com.yvision.model.DoorAccessModel;
 import com.yvision.model.OldEmployeeImgModel;
 import com.yvision.model.OldEmployeeModel;
+import com.yvision.model.VipModel;
 import com.yvision.utils.APIUtils;
 import com.yvision.utils.ConfigUtil;
 import com.yvision.utils.JSONUtils;
@@ -289,7 +291,44 @@ public class UserHelper {
 
         return (new Gson()).fromJson(httpResult.jsonObject.toString(), AttendDetailModel.class);
     }
+    /**
+     * 获取VIP详情
+     * get
+     */
+    public static VipModel getVIPDetail(Context context, String attendId)
+            throws MyException {
 
+        if (!NetworkManager.isNetworkAvailable(context)) {
+            throw new MyException(R.string.network_invalid);
+        }
+        HttpResult httpResult = APIUtils.getForObject(WebUrl.Vip.VIP_DETAIL + attendId);
+
+        if (httpResult.hasError()) {
+            throw httpResult.getError();
+        }
+
+        return (new Gson()).fromJson(httpResult.jsonObject.toString(), VipModel.class);
+    }
+
+
+    /**
+     * 获取门禁详情
+     * get
+     */
+    public static DoorAccessModel getDoorAccessDetail(Context context, String attendId)
+            throws MyException {
+
+        if (!NetworkManager.isNetworkAvailable(context)) {
+            throw new MyException(R.string.network_invalid);
+        }
+        HttpResult httpResult = APIUtils.getForObject(WebUrl.DoorAccess.DOORACCESS_DETAIL + attendId);
+
+        if (httpResult.hasError()) {
+            throw httpResult.getError();
+        }
+
+        return (new Gson()).fromJson(httpResult.jsonObject.toString(), DoorAccessModel.class);
+    }
     /**
      * 14获取 vip 人脸库
      */

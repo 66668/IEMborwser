@@ -35,6 +35,8 @@ import com.yvision.dialog.Loading;
 import com.yvision.helper.UserHelper;
 import com.yvision.model.AttendDetailModel;
 import com.yvision.model.AttendModel;
+import com.yvision.model.DoorAccessModel;
+import com.yvision.model.VipModel;
 import com.yvision.utils.PageUtil;
 import com.yvision.utils.Utils;
 import com.yvision.widget.CircleImageView;
@@ -43,6 +45,10 @@ import com.yvision.widget.JpushMsgToast;
 import java.util.ArrayList;
 
 /**
+ * app在线，正常接收推送，数据只保存一天，sql处理。
+ * 当由离线到在线，这期间数据会根据mintime和maxtime确定，maxtime为当前时间
+ * （1）当天清除数据后，再登陆，无旧数据，min为空，
+ * （2）登录退出有数据，再登陆，有旧数据，min为第一条数据time
  * Created by sjy on 2017/4/5.
  */
 
@@ -55,11 +61,13 @@ public class ListDataFragment extends BaseFragment {
     private static final int GET_ATTEND_SUCCESS = -43;
     private static final int GET_VISITOR_SUCCESS = -44;
     private static final int OFFLINE_SUCCESS = -45;
+    private static final int OFFLINE_SUCCESS02 = -46;
 
     private static final int GET_DOOR_FAILED = -39;
     private static final int GET_VISITOR_FAILED = -38;
     private static final int GET_ATTEND_FAILED = -37;
     private static final int GET_VIP_FAILED = -36;
+    private static final int OFFLINE_FAILED02 = -35;
 
     //
     private boolean isRightChange = true;//标记
@@ -69,6 +77,7 @@ public class ListDataFragment extends BaseFragment {
     //普通考勤只有部门 地图考勤只有地址
     private RelativeLayout layout_dept;
     private RelativeLayout layout_adress;
+    private RelativeLayout layout_id;
     private TextView tv_dept;
     private TextView tv_adress;
 
@@ -149,6 +158,8 @@ public class ListDataFragment extends BaseFragment {
         layout_adress = (RelativeLayout) view.findViewById(R.id.layout_address);
         tv_adress = (TextView) view.findViewById(R.id.tv_address);
 
+        //vip 无id
+        layout_id = (RelativeLayout) view.findViewById(R.id.layout_id);
         isForeground = true;
 
         adapter = new MainJpushListAdapter(getActivity());
@@ -182,7 +193,13 @@ public class ListDataFragment extends BaseFragment {
         switch (model.getType()) {
             case "考勤":
                 getAttendDetailDate(model.getId());
+                break;
+            case "VIP":
+                getVIPDetailDate(model.getId());
+                break;
 
+            case "门禁":
+                getDoorDetailDate(model.getId());
                 break;
 
         }
@@ -212,12 +229,59 @@ public class ListDataFragment extends BaseFragment {
     }
 
     /**
+     * 获取VIP详情
+     *
+     * @param id
+     */
+    private void getVIPDetailDate(final String id) {
+        //        if(isRightChange){
+        //            return;
+        //        }
+        Loading.noDialogRun(getActivity(), new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    VipModel detailModel = UserHelper.getVIPDetail(getActivity(), id);
+                    handler.sendMessage(handler.obtainMessage(GET_VIP_SUCCESS, detailModel));
+                } catch (MyException e) {
+                    Log.d(TAG, "异常=" + e.toString());
+                    handler.sendMessage(handler.obtainMessage(GET_VIP_FAILED, e.toString()));
+                }
+            }
+        });
+    }
+
+    /**
+     * 获取VIP详情
+     *
+     * @param id
+     */
+    private void getDoorDetailDate(final String id) {
+        //        if(isRightChange){
+        //            return;
+        //        }
+        Loading.noDialogRun(getActivity(), new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DoorAccessModel detailModel = UserHelper.getDoorAccessDetail(getActivity(), id);
+                    handler.sendMessage(handler.obtainMessage(GET_DOOR_SUCCESS, detailModel));
+                } catch (MyException e) {
+                    Log.d(TAG, "异常=" + e.toString());
+                    handler.sendMessage(handler.obtainMessage(GET_DOOR_FAILED, e.toString()));
+                }
+            }
+        });
+    }
+
+    /**
      * 从存储中获取数据
      */
     private void getData() {
         listdate = dao.getModelList();
         if (listdate == null || listdate.size() <= 0) {
-            return;
+            getOffLineDate02();//数据库有记录
+
         } else {
             //判断数据是否是今日，不是就清空存储
             String oldTime = listdate.get(listdate.size() - 1).getCapTime();
@@ -236,13 +300,14 @@ public class ListDataFragment extends BaseFragment {
                 dao.clearDb();
             }
             //获取app离线的数据，并保存
-            getOffLineDate(listdate);
+            getOffLineDate01(listdate);//数据库有记录
 
         }
 
     }
 
-    private void getOffLineDate(final ArrayList<AttendModel> oldListDate) {
+    //数据库有记录
+    private void getOffLineDate01(final ArrayList<AttendModel> oldListDate) {
         final String CurrentTime = Utils.getCurrentDate();
 
         Loading.noDialogRun(getActivity(), new Runnable() {
@@ -256,6 +321,27 @@ public class ListDataFragment extends BaseFragment {
                     handler.sendMessage(handler.obtainMessage(OFFLINE_SUCCESS, offLineDate));
                 } catch (MyException e) {
                     e.printStackTrace();
+                }
+            }
+        });
+
+    }
+
+    //数据库无记录
+    private void getOffLineDate02() {
+        final String CurrentTime = Utils.getCurrentDate();
+
+        Loading.noDialogRun(getActivity(), new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ArrayList<AttendModel> offLineDate = new ArrayList<AttendModel>();
+                    offLineDate = UserHelper.getOffLineDate(getActivity(), HttpParameter.create()
+                            .add("maxTime ", CurrentTime)
+                            .add("minTime", ""));
+                    handler.sendMessage(handler.obtainMessage(OFFLINE_SUCCESS02, offLineDate));
+                } catch (MyException e) {
+                    handler.sendMessage(handler.obtainMessage(OFFLINE_FAILED02, e.getMessage()));
                 }
             }
         });
@@ -290,11 +376,37 @@ public class ListDataFragment extends BaseFragment {
                     PageUtil.DisplayToast((String) msg.obj);
                     break;
 
+                case GET_VIP_SUCCESS:
+                    VipModel VipModel = (VipModel) msg.obj;
+                    showVIPDetail(VipModel);
+                    break;
+                case GET_VIP_FAILED:
+                    PageUtil.DisplayToast((String) msg.obj);
+                    break;
+                case GET_DOOR_SUCCESS:
+                    DoorAccessModel DOOR = (DoorAccessModel) msg.obj;
+                    showDoorDetail(DOOR);
+                    break;
+                case GET_DOOR_FAILED:
+                    PageUtil.DisplayToast((String) msg.obj);
+                    break;
+
                 case OFFLINE_SUCCESS:
                     ArrayList<AttendModel> offLineDate = new ArrayList<>();
                     offLineDate = (ArrayList<AttendModel>) msg.obj;
                     adapter.insertEntityList((ArrayList) offLineDate);
                     listView.setAdapter(adapter);
+                    break;
+
+                case OFFLINE_SUCCESS02:
+                    ArrayList<AttendModel> offLineDate2 = new ArrayList<>();
+                    offLineDate2 = (ArrayList<AttendModel>) msg.obj;
+                    adapter.setEntityList((ArrayList) offLineDate2);
+                    listView.setAdapter(adapter);
+                    break;
+
+                case OFFLINE_FAILED02:
+                    PageUtil.DisplayToast((String) msg.obj);
                     break;
             }
         }
@@ -318,10 +430,51 @@ public class ListDataFragment extends BaseFragment {
 
     private void showAttendDetail(AttendDetailModel model) {
         //普通考勤没有地址，设置隐藏
-        layout_adress.setVisibility(View.INVISIBLE);
+        layout_adress.setVisibility(View.GONE);
         layout_dept.setVisibility(View.VISIBLE);
+        layout_id.setVisibility(View.VISIBLE);
+        //
         tv_dept.setText(model.getDepartmentName());
+        tv_score.setText(model.getScore());
+        tv_company.setText(model.getCompanyName());
+        tv_captime.setText(model.getCapTime());
+        tv_name.setText(model.getEmployeeName());
+        tv_id.setText(model.getWrokId());
+        imgLoader.displayImage(model.getImagePath(), photo_default, imgOptions);
+        imgLoader.displayImage(model.getCapImagePath(), photo_cap, imgOptions);
+    }
 
+    /**
+     * VIP详情展示
+     *
+     * @param model
+     */
+
+    private void showVIPDetail(VipModel model) {
+        //普通考勤没有地址，设置隐藏
+        layout_adress.setVisibility(View.GONE);
+        layout_dept.setVisibility(View.GONE);
+        layout_id.setVisibility(View.GONE);
+        //
+        tv_score.setText(model.getScore());
+        tv_company.setText(model.getCompanyName());
+        tv_captime.setText(model.getCapTime());
+        tv_name.setText(model.getEmployeeName());
+        imgLoader.displayImage(model.getImagePath(), photo_default, imgOptions);
+        imgLoader.displayImage(model.getCapImagePath(), photo_cap, imgOptions);
+    }
+
+    /**
+     * 门禁详情展示 无部门
+     *
+     * @param model
+     */
+
+    private void showDoorDetail(DoorAccessModel model) {
+        //普通考勤没有地址，设置隐藏
+        layout_adress.setVisibility(View.GONE);
+        layout_dept.setVisibility(View.GONE);
+        layout_id.setVisibility(View.VISIBLE);
         //
         tv_score.setText(model.getScore());
         tv_company.setText(model.getCompanyName());
