@@ -5,17 +5,16 @@ public class WebUrl {
      * 根接口
      */
     // 云端
-    //    public static final String LOGIN_URL = "http://101.201.72.112:9016/";//公司使用地址
-    //    public static final String LOGIN_URL = "http://101.201.72.112:7016/";//测试地址
+    public static final String LOGIN_URL = "http://101.201.72.112:9016/";//公司使用地址
+    //        public static final String LOGIN_URL = "http://101.201.72.112:7016/";//测试地址
     //    public static final String LOGIN_URL = "http://192.168.1.85:9011/";//江苏银行
-    public static final String LOGIN_URL = "http://192.168.1.245:1132/"; //IEM测试地址
+    //    public static final String LOGIN_URL = "http://192.168.1.245:1132/"; //IEM测试地址
 
 
     /**
      * 注册根目录
      */
     public static final String API = "openapi/";
-
 
 
     /**
@@ -43,10 +42,10 @@ public class WebUrl {
      */
     public static final String CHANGE_PASSWORD = LOGIN_URL + API + "User/ChangePasswordN";
 
-  /**
+    /**
      * 获取登录人信息
      */
-    public static final String GET_PERSON_MESSAGE= LOGIN_URL + API + "User/Main/GetEmployeeInfoByID/";
+    public static final String GET_PERSON_MESSAGE = LOGIN_URL + API + "User/Main/GetEmployeeInfoByID/";
 
 
     /**
@@ -174,7 +173,7 @@ public class WebUrl {
      */
     public static class DoorAccess {
         /**
-         *  门禁记录
+         * 门禁记录
          */
         public static final String GET_DOOR_ACCESS_LIST = LOGIN_URL + API + "DoorAccess/GetDoorAccessRecordByPage";
         /**
@@ -253,7 +252,7 @@ public class WebUrl {
     public static final String GET_OLD_EMPLOYEE_IMG = LOGIN_URL + API + "Image/GetImageListByEmployeeID/";
 
     /**
-     *获取离线推送数据
+     * 获取离线推送数据
      */
 
     public static final String GET_OFFLINE_DATA = LOGIN_URL + API + "AllRecord/GetAllRecordPushByTime";

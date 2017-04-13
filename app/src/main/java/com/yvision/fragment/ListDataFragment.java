@@ -55,7 +55,7 @@ import java.util.ArrayList;
 public class ListDataFragment extends BaseFragment {
     //常量
     private static final int MSG_RECEIVE = -40;
-    private static final String TAG = "JSY";
+    private static final String TAG = "SJY";
     private static final int GET_VIP_SUCCESS = -41;
     private static final int GET_DOOR_SUCCESS = -42;
     private static final int GET_ATTEND_SUCCESS = -43;
@@ -306,7 +306,7 @@ public class ListDataFragment extends BaseFragment {
 
     }
 
-    //数据库有记录
+    //数据库离线记录
     private void getOffLineDate01(final ArrayList<AttendModel> oldListDate) {
         final String CurrentTime = Utils.getCurrentDate();
 
@@ -314,8 +314,10 @@ public class ListDataFragment extends BaseFragment {
             @Override
             public void run() {
                 try {
+                    Log.d(TAG, "run: storeId=" + UserHelper.getCurrentUser().getStoreID() + "\nCurrentTime=" + CurrentTime + "\noldListDate.get(0).getCapTime()=" + oldListDate.get(0).getCapTime());
                     ArrayList<AttendModel> offLineDate = new ArrayList<AttendModel>();
                     offLineDate = UserHelper.getOffLineDate(getActivity(), HttpParameter.create()
+                            .add("storeId", UserHelper.getCurrentUser().getStoreID())
                             .add("maxTime ", CurrentTime)
                             .add("minTime", oldListDate.get(0).getCapTime()));
                     handler.sendMessage(handler.obtainMessage(OFFLINE_SUCCESS, offLineDate));
@@ -335,8 +337,10 @@ public class ListDataFragment extends BaseFragment {
             @Override
             public void run() {
                 try {
+                    Log.d(TAG, "run: storeId=" + UserHelper.getCurrentUser().getStoreID() + "\nCurrentTime=" + CurrentTime );
                     ArrayList<AttendModel> offLineDate = new ArrayList<AttendModel>();
                     offLineDate = UserHelper.getOffLineDate(getActivity(), HttpParameter.create()
+                            .add("storeId", UserHelper.getCurrentUser().getStoreID())
                             .add("maxTime ", CurrentTime)
                             .add("minTime", ""));
                     handler.sendMessage(handler.obtainMessage(OFFLINE_SUCCESS02, offLineDate));
