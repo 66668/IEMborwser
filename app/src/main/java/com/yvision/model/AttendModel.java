@@ -22,12 +22,12 @@ public class AttendModel implements Serializable {
         Pic = pic;
     }
 
-    public String getCapTime () {
-        return CapTime ;
+    public String getCapTime() {
+        return CapTime;
     }
 
-    public void setCapTime (String CapTime ) {
-        CapTime  = CapTime ;
+    public void setCapTime(String capTime) {
+        CapTime = capTime;
     }
 
     public static long getSerialVersionUID() {

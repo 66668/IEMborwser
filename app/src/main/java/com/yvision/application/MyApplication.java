@@ -11,8 +11,6 @@ import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
-import com.squareup.leakcanary.LeakCanary;
-import com.squareup.leakcanary.RefWatcher;
 import com.yvision.utils.Utils;
 
 import java.io.File;
@@ -55,16 +53,15 @@ public class MyApplication extends Application {
         initImageLoader(this);
 
         //内存泄漏检测
-        refWatcher = LeakCanary.install(this);
+//        refWatcher = LeakCanary.install(this);
     }
 
     //内存泄漏设置
-    private RefWatcher refWatcher;
-
-    public static RefWatcher getRefWatcher(Context context) {
-        MyApplication application = (MyApplication) context.getApplicationContext();
-        return application.refWatcher;
-    }
+//    private RefWatcher refWatcher;
+//    public static RefWatcher getRefWatcher(Context context) {
+//        MyApplication application = (MyApplication) context.getApplicationContext();
+//        return application.refWatcher;
+//    }
 
     //
     private void initImageLoader(Context context) {

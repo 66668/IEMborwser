@@ -19,13 +19,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.squareup.leakcanary.RefWatcher;
 import com.yvision.R;
 import com.yvision.adapter.MainJpushListAdapter;
-import com.yvision.application.MyApplication;
 import com.yvision.base.BaseFragment;
 import com.yvision.common.HttpParameter;
 import com.yvision.common.ImageLoadingConfig;
@@ -280,11 +279,13 @@ public class ListDataFragment extends BaseFragment {
     private void getData() {
         listdate = dao.getModelList();
         if (listdate == null || listdate.size() <= 0) {
-            getOffLineDate02();//数据库有记录
-
+            //app安装后无数据，调接口获取今天的离线数据
+            getOffLineDate02();//app列表没有数据
         } else {
-            //判断数据是否是今日，不是就清空存储
+            //判断数据是否是今日，不是就清空存储,同时调接口获取今天的离线数据
             String oldTime = listdate.get(listdate.size() - 1).getCapTime();
+            Log.d(TAG, "数据个数：" + listdate.size() + "--时间格式：" + oldTime + "--time=" + listdate.get(1).getCapTime() + "--Type=" + listdate.get(1).getType() +
+                    "--id=" + listdate.get(1).getId() + "--Message=" + listdate.get(1).getMessage() + "\npic=" + listdate.get(1).getPic());
             String newTime = Utils.getCurrentDate();
             String oldDay = oldTime.substring(oldTime.lastIndexOf("-"), oldTime.indexOf(" "));
             String newDay = newTime.substring(newTime.lastIndexOf("-"), newTime.indexOf(" "));
@@ -308,18 +309,19 @@ public class ListDataFragment extends BaseFragment {
 
     //数据库离线记录
     private void getOffLineDate01(final ArrayList<AttendModel> oldListDate) {
-        final String CurrentTime = Utils.getCurrentDate();
-
+        Log.d(TAG, "getOffLineDate01: ");
         Loading.noDialogRun(getActivity(), new Runnable() {
             @Override
             public void run() {
                 try {
-                    Log.d(TAG, "run: storeId=" + UserHelper.getCurrentUser().getStoreID() + "\nCurrentTime=" + CurrentTime + "\noldListDate.get(0).getCapTime()=" + oldListDate.get(0).getCapTime());
-                    ArrayList<AttendModel> offLineDate = new ArrayList<AttendModel>();
-                    offLineDate = UserHelper.getOffLineDate(getActivity(), HttpParameter.create()
+                    Log.d(TAG, "run: storeId=" + UserHelper.getCurrentUser().getStoreID() + "\nCurrentTime=" + Utils.getCurrentDate()
+                            + "\noldListDate.get(0).getCapTime()=" + oldListDate.get(0).getCapTime());
+
+                    ArrayList<AttendModel> offLineDate = UserHelper.getOffLineDate(getActivity(), HttpParameter.create()
                             .add("storeId", UserHelper.getCurrentUser().getStoreID())
-                            .add("maxTime ", CurrentTime)
+                            .add("maxTime", Utils.getCurrentDate())// Utils.getCurrentDate()
                             .add("minTime", oldListDate.get(0).getCapTime()));
+
                     handler.sendMessage(handler.obtainMessage(OFFLINE_SUCCESS, offLineDate));
                 } catch (MyException e) {
                     e.printStackTrace();
@@ -332,17 +334,17 @@ public class ListDataFragment extends BaseFragment {
     //数据库无记录
     private void getOffLineDate02() {
         final String CurrentTime = Utils.getCurrentDate();
-
+        Log.d(TAG, "getOffLineDate02: ");
         Loading.noDialogRun(getActivity(), new Runnable() {
             @Override
             public void run() {
                 try {
-                    Log.d(TAG, "run: storeId=" + UserHelper.getCurrentUser().getStoreID() + "\nCurrentTime=" + CurrentTime );
+                    Log.d(TAG, "run: storeId=" + UserHelper.getCurrentUser().getStoreID() + "\nCurrentTime=" + CurrentTime);
                     ArrayList<AttendModel> offLineDate = new ArrayList<AttendModel>();
                     offLineDate = UserHelper.getOffLineDate(getActivity(), HttpParameter.create()
                             .add("storeId", UserHelper.getCurrentUser().getStoreID())
-                            .add("maxTime ", CurrentTime)
-                            .add("minTime", ""));
+                            .add("maxTime", "")
+                            .add("minTime", CurrentTime));
                     handler.sendMessage(handler.obtainMessage(OFFLINE_SUCCESS02, offLineDate));
                 } catch (MyException e) {
                     handler.sendMessage(handler.obtainMessage(OFFLINE_FAILED02, e.getMessage()));
@@ -398,13 +400,18 @@ public class ListDataFragment extends BaseFragment {
                 case OFFLINE_SUCCESS:
                     ArrayList<AttendModel> offLineDate = new ArrayList<>();
                     offLineDate = (ArrayList<AttendModel>) msg.obj;
+                    Log.d(TAG, "run: 离线数据是否为空=" + (offLineDate == null) + "==个数：" + offLineDate.size());
+                    saveListModel(offLineDate);
                     adapter.insertEntityList((ArrayList) offLineDate);
                     listView.setAdapter(adapter);
                     break;
 
                 case OFFLINE_SUCCESS02:
                     ArrayList<AttendModel> offLineDate2 = new ArrayList<>();
+                    //保存
                     offLineDate2 = (ArrayList<AttendModel>) msg.obj;
+                    Log.d(TAG, "run: 离线数据是否为空=" + (offLineDate2 == null) + "==个数：" + offLineDate2.size());
+                    saveListModel(offLineDate2);
                     adapter.setEntityList((ArrayList) offLineDate2);
                     listView.setAdapter(adapter);
                     break;
@@ -489,9 +496,17 @@ public class ListDataFragment extends BaseFragment {
         imgLoader.displayImage(model.getCapImagePath(), photo_cap, imgOptions);
     }
 
-    //数据保存
+    //model数据保存
     private void saveModel(AttendModel model) {
+        String js = (new Gson()).toJson(model);
+        Log.d(TAG, "接受自定义消息的数据-->saveModel: " + js);
         dao.saveModel(model);
+    }
+
+    //model数据保存
+    private void saveListModel(ArrayList<AttendModel> list) {
+
+        dao.saveListModel(list);
     }
 
     /**
@@ -510,6 +525,7 @@ public class ListDataFragment extends BaseFragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (MESSAGE_RECEIVED_ACTION.equals(intent.getAction())) {
+                //接受到model
                 model = (AttendModel) intent.getSerializableExtra("AttendModel");
                 Log.d(TAG, "接收到Jush的model,可以在main中做自定义处理 model.getMessage=" + model.getMessage());
                 handler.sendMessage(handler.obtainMessage(MSG_RECEIVE, model));
@@ -553,7 +569,6 @@ public class ListDataFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        getData();
         isForeground = true;
     }
 
@@ -575,8 +590,8 @@ public class ListDataFragment extends BaseFragment {
         adapter.destroy();
 
         //使用 RefWatcher 监控 Fragment
-        RefWatcher refWatcher = MyApplication.getRefWatcher(getActivity());
-        refWatcher.watch(this);
+        //        RefWatcher refWatcher = MyApplication.getRefWatcher(getActivity());
+        //        refWatcher.watch(this);
     }
 
     //重写setMenuVisibility方法，不然会出现叠层的现象

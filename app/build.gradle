@@ -64,7 +64,7 @@ dependencies {
     compile files('libs/jpush-android_v3.0.1.jar')
     //gson
     compile files('libs/gson-2.2.2.jar')
-    //
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    //leakcanary
+//    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+//    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
 }

@@ -24,7 +24,7 @@ public class SQLAttend extends SQLiteOpenHelper {
 
     //
     private static final int Db_CO_VERSION = 1;//数据库version
-    private static final String DB_NAME = "contactcopy.db";//数据库
+    private static final String DB_NAME = "face.db";//数据库
     private static final String TABLE_NAME = "attendDate";//表名
 
     //
@@ -64,6 +64,21 @@ public class SQLAttend extends SQLiteOpenHelper {
         db.close();
     }
 
+    //保存list
+    public void saveListModel(ArrayList<AttendModel> list) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        for (int i = 0; i < list.size(); i++) {
+            ContentValues values = new ContentValues();
+            values.put("message", list.get(i).getMessage());
+            values.put("Type", list.get(i).getType());
+            values.put("Id", list.get(i).getId());
+            values.put("Pic", list.get(i).getPic());
+            values.put("date", list.get(i).getCapTime());
+            db.insert(TABLE_NAME, null, values);
+        }
+        db.close();
+    }
+
     //读取所有数据
     public ArrayList<AttendModel> getModelList() {
         ArrayList<AttendModel> list = new ArrayList<>();
@@ -71,7 +86,7 @@ public class SQLAttend extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor cursor = db.query(TABLE_NAME
                     , new String[]{"message", "Type", "date", "Id", "Pic"}
-                    , null, null, null, null,  "date desc");
+                    , null, null, null, null, "date desc");
             cursor.moveToFirst();
             while (cursor.moveToNext()) {
                 String message = cursor.getString(cursor.getColumnIndex("message"));

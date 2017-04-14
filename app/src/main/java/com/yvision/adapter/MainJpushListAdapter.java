@@ -112,8 +112,9 @@ public class MainJpushListAdapter extends BaseAdapter {
         imgLoader.displayImage(model.getPic(), holder.img_photo, imgOptions);
         return convertView;
     }
-    public void destroy(){
-        if(imgLoader != null){
+
+    public void destroy() {
+        if (imgLoader != null) {
             imgLoader.clearMemoryCache();
             imgLoader.destroy();
 
