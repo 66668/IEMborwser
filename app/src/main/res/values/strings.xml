@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IEMborwser</string>
+    <string name="app_name">麟智汇HD</string>
     <string name="network_invalid">网络不给力，请检查网络连接！</string>
     <!-- login.xml / LoginActivity.java -->
     <string name="companyName">登录界面的文字</string> <!-- 设置文字 -->
