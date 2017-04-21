@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yvision.AddNewAttenderActivity;
@@ -52,6 +53,7 @@ public class RegistFragment extends BaseFragment {
     private TextView tv_dept;
     private TextView tv_gender;
     private TextView tv_attendType;
+    private RelativeLayout layout_forImg;
     private com.yvision.widget.FloatActionButton floatActionButton;
 
     // 常量
@@ -96,6 +98,7 @@ public class RegistFragment extends BaseFragment {
         tv_dept = (TextView) view.findViewById(R.id.tv_dept);
         tv_gender = (TextView) view.findViewById(R.id.tv_gender);
         tv_attendType = (TextView) view.findViewById(R.id.tv_attendType);
+        layout_forImg = (RelativeLayout) view.findViewById(R.id.layout_forImg);
         floatActionButton = (FloatActionButton) view.findViewById(R.id.floatActionButton);
 
         adapter = new RegisterListAdapter(getActivity());

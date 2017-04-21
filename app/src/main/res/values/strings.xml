@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">麟智汇HD</string>
+    <string name="app_name">小麟HD</string>
     <string name="network_invalid">网络不给力，请检查网络连接！</string>
     <!-- login.xml / LoginActivity.java -->
     <string name="companyName">登录界面的文字</string> <!-- 设置文字 -->
@@ -8,9 +8,10 @@
     <string name="psd">密码</string> <!-- 密码-->
     <string name="byFace">人脸登录</string> <!-- 人脸登录-->
     <string name="btn_Login">登录</string> <!-- 登录-->
-    <string name="LoginActivity_companyNum">请输入公司编号！</string> <!-- 请输入公司编号！-->
-    <string name="LoginActivity_employeeNum">请输入工号！</string> <!-- 请输入工号！-->
-    <string name="LoginActivity_psd">请输入密码！</string>
+    <string name="LoginActivity_companyNum">公司编号</string> <!-- 请输入公司编号！-->
+    <string name="LoginActivity_employeeNum">员工编号</string> <!-- 请输入工号！-->
+    <string name="LoginActivity_psd">登录密码</string>
+    <string name="main_title">企业智能管理系统</string>
     <string name="LoginActivity_error">登录信息有误，请再确认账号和密码!</string>
     <!-- tab 信息-->
     <string name="msg_list">信息列表</string>

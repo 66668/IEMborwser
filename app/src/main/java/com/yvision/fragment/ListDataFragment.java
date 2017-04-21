@@ -423,7 +423,7 @@ public class ListDataFragment extends BaseFragment {
         }
     };
 
-    //弹窗显示数据
+    //弹窗显示推送数据
     private void dialogShow(AttendModel model) {
         String message = model.getMessage();
         String Type = model.getType();

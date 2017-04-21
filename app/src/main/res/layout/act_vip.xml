@@ -17,13 +17,13 @@
         android:id="@+id/floatActionButton"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:src="@android:drawable/ic_input_add"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
         android:layout_marginRight="10dp"
-        custom:bg_color="@color/common_bg_color"
+        android:layout_toLeftOf="@+id/scrollView"
+        android:src="@android:drawable/ic_input_add"
         android:tint="@android:color/white"
-        android:layout_toLeftOf="@+id/scrollView"/>
+        custom:bg_color="@color/common_bg_color"/>
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -253,6 +253,45 @@
                     android:layout_height="1dp"
                     android:layout_alignParentBottom="true"
                     android:layout_below="@+id/tv_attendType1"
+                    android:background="@color/cl_text_common">
+                </View>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/layout_forImg"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                >
+
+                <TextView
+                    android:id="@+id/tv_img1"
+                    android:layout_width="200dp"
+                    android:layout_height="49dp"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="25dp"
+                    android:text="@string/msg_dataface"
+                    android:textColor="@color/cl_text_common"
+                    android:textSize="@dimen/common_textSize_default16"/>
+
+                <TextView
+                    android:id="@+id/tv_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="49dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/tv_img1"
+                    android:drawableRight="@mipmap/forword"
+                    android:gravity="center_vertical"
+                    android:paddingRight="30dp"
+                    android:textColor="@color/cl_text_common"
+                    android:textSize="@dimen/common_textSize_default16"/>
+
+                <View
+                    android:id="@+id/viewaimg"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/tv_img1"
                     android:background="@color/cl_text_common">
                 </View>
             </RelativeLayout>
