@@ -4,8 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.google.gson.Gson;
 import com.yvision.db.entity.UserEntity;
+
+import org.json.JSONObject;
 
 /**
  * 中断保存设置
@@ -81,7 +82,7 @@ public class ConfigUtil {
         String string = sp.getString(USER_ENTITY, null);
         if (string != null && string.length() > 0) {
             try {
-                return new Gson().fromJson(string, UserEntity.class);
+                return (UserEntity)UserEntity.toEntityBase(new JSONObject(string), UserEntity.class);
             } catch (Exception e) {
                 e.printStackTrace();
             }
