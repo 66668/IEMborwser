@@ -16,7 +16,7 @@
     <!-- tab 信息-->
     <string name="msg_list">信息列表</string>
     <string name="msg_search">信息查询</string>
-    <string name="vip_reg">VIP注册</string>
+    <string name="vip_reg">人员注册</string>
     <!-- msg详情-->
     <string name="msg_regist_img">注册图:</string>
     <string name="msg_cap_img">抓拍图:</string>

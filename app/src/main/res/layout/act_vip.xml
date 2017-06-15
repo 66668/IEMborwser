@@ -25,12 +25,19 @@
         android:tint="@android:color/white"
         custom:bg_color="@color/common_bg_color"/>
 
+    <View
+        android:id="@+id/view"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/listView"
+        android:background="@color/bar_line"/>
+
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:layout_toRightOf="@+id/listView"
+        android:layout_toRightOf="@+id/view"
         android:background="@android:color/white">
 
         <LinearLayout

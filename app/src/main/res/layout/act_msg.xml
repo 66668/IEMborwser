@@ -43,7 +43,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginRight="20dp"
-                android:background="@mipmap/default_photo"/>
+                android:background="@mipmap/vip_default_photo"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginLeft="20dp"
-                android:background="@mipmap/default_photo"/>
+                android:background="@mipmap/vip_default_photo"/>
 
         </LinearLayout>
 

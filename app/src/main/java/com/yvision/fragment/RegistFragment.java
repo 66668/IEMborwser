@@ -85,7 +85,7 @@ public class RegistFragment extends BaseFragment {
 
 
     /**
-     * 数据详细操作
+     * 初始化控件
      *
      * @param view
      */
@@ -111,6 +111,7 @@ public class RegistFragment extends BaseFragment {
      */
 
     private void initListener() {
+        //详情查看
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -118,6 +119,8 @@ public class RegistFragment extends BaseFragment {
                 setShow(model);
             }
         });
+
+        //添加注册
         floatActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

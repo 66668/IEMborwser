@@ -131,7 +131,7 @@ public class ListDataFragment extends BaseFragment {
 
 
     /**
-     * 数据详细操作
+     * 初始化控件
      *
      * @param view
      */
