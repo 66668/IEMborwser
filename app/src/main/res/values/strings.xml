@@ -14,7 +14,7 @@
     <string name="main_title">企业智能管理系统</string>
     <string name="LoginActivity_error">登录信息有误，请再确认账号和密码!</string>
     <!-- tab 信息-->
-    <string name="msg_list">信息列表</string>
+    <string name="msg_list">消息列表</string>
     <string name="msg_search">信息查询</string>
     <string name="vip_reg">人员注册</string>
     <!-- msg详情-->
