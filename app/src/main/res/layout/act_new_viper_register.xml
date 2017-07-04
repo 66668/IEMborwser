@@ -165,12 +165,12 @@
                         android:gravity="right|center_vertical"
                         android:padding="5dp"
                         android:singleLine="true"
-                        android:text="客户号"
+                        android:text="@string/vip_company"
                         android:textColor="@color/textColor"
                         android:textSize="@dimen/common_textSize_default12"/>
 
                     <EditText
-                        android:id="@+id/RegisterActivity_et_strUserIDNumber"
+                        android:id="@+id/et_bip_company"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
@@ -178,7 +178,7 @@
                         android:layout_weight="0.66"
                         android:background="@drawable/et_regist_common_style"
                         android:gravity="center_vertical"
-                        android:hint="@string/RegisterActivity_et_id"
+                        android:hint="@string/Registervip_et_company"
                         android:paddingLeft="20dp"
                         android:singleLine="true"
                         android:textColorHint="@color/textHintColor"

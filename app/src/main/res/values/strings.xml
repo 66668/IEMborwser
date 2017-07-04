@@ -17,6 +17,7 @@
     <string name="msg_list">消息列表</string>
     <string name="msg_search">信息查询</string>
     <string name="vip_reg">人员注册</string>
+
     <!-- msg详情-->
     <string name="msg_regist_img">注册图:</string>
     <string name="msg_cap_img">抓拍图:</string>
@@ -31,6 +32,9 @@
     <string name="msg_attendType">考勤类型</string>
     <string name="msg_dataface">人像库</string>
 
+    <!-- 注册-->
+    <string name="Registervip_et_company">请输入公司名称</string>
+    <string name="vip_company">公司名称</string>
     <string name="RegisterActivity_et_name">请输入客户姓名</string>
     <string name="RegisterActivity_employee_id">请输入员工编号</string>
     <string name="RegisterActivity_et_id">请输入客户号</string>
